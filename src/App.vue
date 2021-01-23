@@ -9,10 +9,10 @@
       <v-toolbar-title class="mt-2"><img src="@/assets/logo-hotel.png" alt="Image is not available"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn depressed class="mx-3 white">Sign In</v-btn>
-        <v-btn class="mx-3 white" depressed>Rooms</v-btn>
-        <v-btn depressed class="mx-3 white">Cafetary</v-btn>
-        <v-btn class="mx-3 white" depressed>Home</v-btn>
+        <v-btn depressed class="mx-3 white btn btnHover">Sign In</v-btn>
+        <v-btn class="mx-3 white btn btnHover" depressed>Rooms</v-btn>
+        <v-btn depressed class="mx-3 white btn btnHover">Cafetary</v-btn>
+        <v-btn class="mx-3 white btn btnHover" depressed>Home</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -77,7 +77,7 @@
                       outlined
                       rows="3"
                     ></v-textarea>
-                    <v-btn depressed>Submit</v-btn>
+                    <v-btn depressed @click="sendEmail">Submit</v-btn>
                     <v-btn depressed class="mx-2">Clear</v-btn>
                   </v-col>
                 </v-row>
@@ -120,6 +120,7 @@ export default {
   name: "App",
   data: function() {
     return {
+      Email: '',
       carouselItems: [
         {
           src: 'https://miro.medium.com/max/2400/1*XUrSasLtkB0VoXcLEMfJKg.jpeg',
@@ -156,17 +157,43 @@ export default {
   },
   methods: {
     //
+    sendEmail() { 
+      this.Email.send({ 
+        Host: "smtp.gmail.com", 
+        Username: "ysbsaji999@gmail.com", 
+        Password: "mercysaji", 
+        To: 'mercyangelin2000@gmail.com', 
+        From: "ysbsaji999@gmail.com", 
+        Subject: "Sending Email using javascript", 
+        Body: "Well that was easy!!", 
+      }) 
+        .then(function (message) { 
+          alert(message, "mail sent successfully") 
+        }); 
+    } 
   },
 
   computed: {
     //
   },
   mounted () {
-    //
+    console.log(`${this.currentUser} is currently logged in.`)
   }
 };
 </script>
 
 <style scoped>
 
+.btn:hover, .btn:focus {
+  color: #fff;
+  outline: 0;
+}
+
+.btnHover {
+  -webkit-transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+  transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+}
+.btnHover:hover {
+  box-shadow: 0 0 40px 40px #e74c3c inset;
+}
 </style>
