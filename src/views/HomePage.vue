@@ -1,5 +1,6 @@
 <template>
     <v-container fluid>
+      <NavigationBar/>
     <v-carousel hide-delimiters cycle>
       <v-carousel-item
         v-for="(item,i) in carouselItems"
@@ -92,8 +93,9 @@
 </template>
 
 <script>
-
+import NavigationBar from "../components/NavigationBar";
 export default {
+  components: { NavigationBar },
   data () {
     return {
       carouselItems: [

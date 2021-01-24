@@ -1,60 +1,35 @@
 <template>
   <v-app>
-    <v-app-bar app color="white">
-      <v-avatar
-        color="grey-lighten"
-        size="60"
-        class="mr-6"
-      ><img src="https://image.shutterstock.com/image-vector/hotel-vector-icon-on-white-260nw-408618085.jpg" alt="Image is not available"></v-avatar>
-      <v-toolbar-title class="mt-2"><img src="@/assets/logo-hotel.png" alt="Image is not available"></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items>
-        <v-btn depressed class="mx-3 white btn btnHover" to="/signuppage">Sign In</v-btn>
-        <v-btn class="mx-3 white btn btnHover" depressed>Rooms</v-btn>
-        <v-btn depressed class="mx-3 white btn btnHover">Cafetary</v-btn>
-        <v-btn class="mx-3 white btn btnHover" to="/" depressed>Home</v-btn>
-      </v-toolbar-items>
+    <v-navigation-drawer app v-if="false">
+      <!-- -->
+    </v-navigation-drawer>
+
+    <v-app-bar app color="primary" v-if="false">
+      <!-- -->
     </v-app-bar>
+
+    <!-- Sizes your content based upon application components -->
     <v-main>
-      <router-view style="padding:0%"></router-view>
+			<!-- Provides the application the proper gutter -->
+			<v-container fluid>
+
+			<!-- If using vue-router -->
+			<router-view style="padding:0%"></router-view>
+			</v-container>
     </v-main>
-    <v-footer dark class="blue draken-1 mt-6">
-      <v-card height="40px">
-      </v-card>
+
+    <v-footer v-if="false" app>
+      <!-- -->
     </v-footer>
-</v-app>
+  </v-app>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-    }
-  },
-  methods: {
-    // 
-  },
-  computed: {
-    //
-  },
-  mounted () {
-    console.log(`${this.currentUser} is currently logged in.`)
-  }
-};
+
+}
 </script>
 
-<style scoped>
+<style>
 
-.btn:hover, .btn:focus {
-  color: #fff;
-  outline: 0;
-}
-
-.btnHover {
-  -webkit-transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
-  transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
-}
-.btnHover:hover {
-  box-shadow: 0 0 40px 40px #e74c3c inset;
-}
 </style>
