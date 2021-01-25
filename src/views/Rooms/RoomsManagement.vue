@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import TableData from '../components/TableData.vue'
+import TableData from '../../components/TableData.vue'
 export default {
   components: { TableData },
   data () {

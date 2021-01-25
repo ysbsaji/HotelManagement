@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    {{ $route.name }}
     <v-navigation-drawer app v-model="drawer" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement'].includes($route.name)">
       <img src="https://i.pinimg.com/originals/9c/37/a1/9c37a1385c59def72e2e3b470c49b475.png" alt="" width="100%" height="20%">
       <v-list
@@ -32,10 +31,9 @@
     <!-- Sizes your content based upon application components -->
     <v-main>
 			<!-- Provides the application the proper gutter -->
-			<v-container fluid>
-
-			<!-- If using vue-router -->
-			<router-view class="pa-0"></router-view>
+			<v-container fluid class="pa-0">
+        <!-- If using vue-router -->
+        <router-view class="pa-0"></router-view>
 			</v-container>
     </v-main>
 

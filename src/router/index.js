@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomePage from '../views/HomePage.vue'
+import HomePage from '../views/Home/HomePage.vue'
 
 Vue.use(VueRouter)
 
@@ -13,58 +13,37 @@ const routes = [
   {
     path: '/signuppage',
     name: 'SignupPage',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "SignupPage" */ '../views/SignupPage.vue')
+    component: () => import(/* webpackChunkName: "SignupPage" */ '../views/Signup/SignupPage.vue')
   },
   {
     path: '/roomspage',
     name: 'RoomsPage',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "RoomsPage" */ '../views/RoomsPage.vue')
+    component: () => import(/* webpackChunkName: "RoomsPage" */ '../views/Rooms/RoomsPage.vue')
   },
   {
     path: '/roomsmanagement',
     name: 'RoomsManagement',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/RoomsManagement.vue')
+    component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomsManagement.vue')
   },
   {
     path: '/cafeteriapage',
     name: 'CafeteriaPage',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "CafeteriaPage" */ '../views/CafeteriaPage.vue')
+    component: () => import(/* webpackChunkName: "CafeteriaPage" */ '../views/Cafeteria/CafeteriaPage.vue')
   },
   {
     path: '/cafeteriamanagement',
     name: 'CafeteriaManagement',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "CafeteriaManagement" */ '../views/CafeteriaManagement.vue')
+    component: () => import(/* webpackChunkName: "CafeteriaManagement" */ '../views/Cafeteria/CafeteriaManagement.vue')
   },
   {
     path: '/customermanagement',
-    name: ' CustomerManagement',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "CustomerManagement" */ '../views/CustomerManagement.vue')
+    name: 'CustomerManagement',
+    component: () => import(/* webpackChunkName: "CustomerManagement" */ '../views/EmployeeAndCustomer/CustomerManagement.vue')
   },
   {
     path: '/employeemanagement',
     name: 'EmployeeManagement',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/EmployeeManagement.vue')
+    component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/EmployeeAndCustomer/EmployeeManagement.vue')
   },
 ]
 
