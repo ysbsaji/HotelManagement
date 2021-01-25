@@ -11,7 +11,7 @@
       <v-toolbar-items>
         <v-btn depressed class="mx-3 white btn btnHover" to="/signuppage">Sign In</v-btn>
         <v-btn class="mx-3 white btn btnHover" to="/roomspage" depressed>Rooms</v-btn>
-        <v-btn depressed class="mx-3 white btn btnHover">Cafetary</v-btn>
+        <v-btn depressed class="mx-3 white btn btnHover" to="CafeteriaPage">Cafeteria</v-btn>
         <v-btn class="mx-3 white btn btnHover" to="/" depressed>Home</v-btn>
       </v-toolbar-items>
     </v-app-bar>

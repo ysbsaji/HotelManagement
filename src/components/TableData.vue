@@ -1,0 +1,26 @@
+<template>
+  <div>
+    <v-data-table
+      :headers="data.headers"
+      :items="data.list"
+      class="elevation-1"
+    >
+    <template v-slot:item.actions="{ item }">
+      <v-btn icon v-for="(action, index) in data.actionsList" text
+        @click="action.click(item)" :key="index">
+        <v-icon>{{ action.icon }}</v-icon>
+      </v-btn>
+    </template>
+    </v-data-table>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['data'],
+}
+</script>
+
+<style>
+
+</style>
