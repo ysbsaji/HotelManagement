@@ -1,8 +1,6 @@
 export default {
   computed: {
-    currentUser() {
-      return 'sajeeth';
-    },
+    //
   },
   methods: {
     getArrayObjFromObjList (objList) { // key-id, value-data => [{},{}]

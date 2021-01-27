@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>
     <form ref="empForm" lazy-validation>
       <v-card-text>
         <v-row>
@@ -32,16 +33,17 @@
             <v-btn text>
               Cancel
             </v-btn>
-            <v-btn class="mx-3" color="#EF5350" @click="saveEmpFromDetails">
+            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveEmpFromDetails">
               Save
             </v-btn>
-             <v-btn class="mx-3" color="#EF5350" >
+             <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateEmpFromDetails" >
               Update
             </v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
     </form>
+    </div>
     <table-data :data="employeeDetails"/>
   </div>
 </template>
@@ -52,6 +54,8 @@ export default {
   components: { TableData },
   data () {
     return {
+      saveBtn: true,
+      updateBtn: false,
       role: [ 'Manager', 'Staff' ],
       empFormDetails: {},
       employeeDetails: {
@@ -60,10 +64,10 @@ export default {
         ],
         list: [],
         actionsList:[{
-          click: (item) => this.edit(item),
+          click: (item) => this.editEmpDetails(item),
           icon:'mdi-pencil'
         },{
-          click: (item) => this.del(item),
+          click: (item) => this.delEmpDetails(item),
           icon:'mdi-delete'
         }]
       }
@@ -71,10 +75,8 @@ export default {
   },
   methods: {
     saveEmpFromDetails(){
-      console.log(typeof this.$refs);
-      this.$refs.empForm.reset()
-      // this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
-      // this.getTableDetails()
+      this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
+      this.getTableDetails()
     },
     async getTableDetails(){
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
@@ -88,7 +90,23 @@ export default {
         })
         reader.readAsDataURL(file)
       }
-    }
+    },
+    editEmpDetails(empDetails){
+      this.empFormDetails = Object.assign({}, empDetails)
+      this.saveBtn = false
+      this.updateBtn = true
+    },
+    updateEmpFromDetails(){
+      this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
+      this.getTableDetails()
+      this.saveBtn = true
+      this.updateBtn = false
+    },
+    delEmpDetails (item) {
+      item.url = 'https://traineesapi.firebaseio.com/employeeDetails/' + item.id + '.json'
+      this.$store.commit('showDelDialog', item)
+      this.getTableDetails()
+    },
   },
   mounted () {
     this.getTableDetails()

@@ -15,10 +15,10 @@
                 <h4>Login</h4>
               </v-card-title>
               <v-form>
-              <v-text-field prepend-icon="mdi-person" label="Username"></v-text-field>
-              <v-text-field prepend-icon="mdi-lock" label="Password" type="password"></v-text-field>
+              <v-text-field prepend-icon="mdi-person" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
+              <v-text-field prepend-icon="mdi-lock" label="Password" type="password" v-model="signInFormData.password" :rules="passwordValidation"></v-text-field>
               <v-card-actions>
-                <v-btn primary large block to="/roomsmanagement">Login</v-btn>
+                <v-btn primary large block @click="signIn">Login</v-btn>
               </v-card-actions>
               </v-form>
             </v-card>
@@ -36,11 +36,25 @@ export default {
   components: { NavigationBar },
   data () {
     return{
-      //
+      signInFormData: {},
+      userDetails: []
     }
   },
   methods: {
-   //
+  signIn(){
+    this.$router.push('roomsmanagement')
+    // this.userDetails.forEach(val => {
+    //   if(val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) this.$router.push('roomsmanagement')
+    // })
+  },
+  async getDetails(){
+    let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
+    this.userDetails = this.getArrayObjFromObjList(empDetails)
+    console.log(this.userDetails);
+  }
+  },
+  mounted () {
+    this.getDetails()
   }
 }
 </script>

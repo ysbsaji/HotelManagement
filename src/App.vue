@@ -80,13 +80,14 @@ export default {
     return {
       drawer: false,
       navigationListItems: [
-        { title: 'Rooms', icon: 'mdi-home-outline', link:'/roomsmanagement' },{ title: 'Cafeteria', icon: 'mdi-home-export-outline', link:'/cafeteriamanagement' },
-        { title: 'Employee', icon: 'mdi-account-supervisor', link:'/employeemanagement' },{ title: 'Cutomer', icon: 'mdi-account-outline', link:'/customermanagement' }
+        { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomstaffassign' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
       ],
       settingsItems: [
-        { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomstaffassign' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
+        { title: 'Rooms', icon: 'mdi-home-outline', link:'/roomsmanagement' },{ title: 'Cafeteria', icon: 'mdi-home-export-outline', link:'/cafeteriamanagement' },
+        { title: 'Employee', icon: 'mdi-account-supervisor', link:'/employeemanagement' }
       ]
     }
+    //{ title: 'Cutomer', icon: 'mdi-account-outline', link:'/customermanagement' }
   },
   computed: {
     deleteDialog () {

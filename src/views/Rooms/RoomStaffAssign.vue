@@ -64,10 +64,12 @@ export default {
     },
     async getDetailOfBookingRooms(){
       let cusDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
-      for(let i in cusDetails){
-        delete cusDetails[i].id
+      if (cusDetails) {
+        for(let i in cusDetails){
+          delete cusDetails[i].id
+        }
+        this.customerDetails = this.getArrayObjFromObjList(cusDetails)  
       }
-      this.customerDetails = this.getArrayObjFromObjList(cusDetails)
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')

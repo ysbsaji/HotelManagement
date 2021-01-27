@@ -13,7 +13,7 @@
           >
             <v-img
               height="250"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+              :src="item.image"
             ></v-img>
 
             <v-card-title>Room Details</v-card-title>
@@ -120,16 +120,14 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-      }
+    },
+    async getDetails(){
+      let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
+      this.roomDetails = this.getArrayObjFromObjList(details)
+    }
   },
   mounted () {
-    this.$http.get('https://traineesapi.firebaseio.com/rooms.json')
-    .then((response) => {
-      this.roomDetails = this.getArrayObjFromObjList(response.data)
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    this.getDetails()
   }
 }
 </script>
