@@ -11,6 +11,9 @@
         <v-icon>{{ action.icon }}</v-icon>
       </v-btn>
     </template>
+    <template v-slot:item.image="{ item }">
+      <img :src="item.image" alt="No image" width="40px">
+    </template>
     </v-data-table>
   </div>
 </template>

@@ -26,6 +26,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomsManagement.vue')
   },
   {
+    path: '/roomstaffassign',
+    name: 'RoomStaffAssign',
+    component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomStaffAssign.vue')
+  },
+  {
     path: '/cafeteriapage',
     name: 'CafeteriaPage',
     component: () => import(/* webpackChunkName: "CafeteriaPage" */ '../views/Cafeteria/CafeteriaPage.vue')
@@ -34,6 +39,11 @@ const routes = [
     path: '/cafeteriamanagement',
     name: 'CafeteriaManagement',
     component: () => import(/* webpackChunkName: "CafeteriaManagement" */ '../views/Cafeteria/CafeteriaManagement.vue')
+  },
+  {
+    path: '/cafeteriastaffassign',
+    name: 'CafeteriaStaffAssign',
+    component: () => import(/* webpackChunkName: "CafeteriaManagement" */ '../views/Cafeteria/CafeteriaStaffAssign.vue')
   },
   {
     path: '/customermanagement',

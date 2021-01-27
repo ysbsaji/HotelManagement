@@ -66,9 +66,9 @@
 
           <v-card-text>
             <form ref="roomBookingForm" class="mt-4">
-              <v-text-field outlined dense label="Name"/>
-              <v-text-field outlined dense type="email" label="Email"/>
-              <v-text-field outlined dense type="number" label="Contact Number"/>
+              <v-text-field outlined dense label="Name" v-model="customerDetails.name"/>
+              <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email"/>
+              <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber"/>
             </form>
           </v-card-text>
           <v-divider></v-divider>
@@ -99,6 +99,7 @@ import NavigationBar from "../../components/NavigationBar";
 export default {
   data () {
     return {
+      customerDetails: {},
       bookingRoomDetails: '',
       roomBokingDialog: false,
       roomDetails: []
@@ -110,7 +111,16 @@ export default {
       this.roomBokingDialog = true
       this.bookingRoomDetails = roomdetails
     },
-    confirmYourBooking(){}
+    confirmYourBooking(){
+      let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
+      this.$http.post('https://traineesapi.firebaseio.com/bookedrooms.json', JSON.stringify(bookedRoomDetails))
+      .then((response) => {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+      }
   },
   mounted () {
     this.$http.get('https://traineesapi.firebaseio.com/rooms.json')
