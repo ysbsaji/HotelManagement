@@ -30,7 +30,7 @@
         </v-list-group>
     </v-navigation-drawer>
 
-    <v-app-bar app color="#e74c3c" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
+    <v-app-bar elevation="0" app color="#e74c3c" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
     <v-main>
@@ -98,6 +98,9 @@ export default {
     delRecordsFromApi(){
       this.deleteDetailsFromApi(this.$store.state.delDetails.url)
       this.$store.commit('hideDelDialog', false)
+      if(this.$store.state.delDetails.title){
+        this.$root.$emit('statusChange', false)
+      }
     }
   },
   mounted () {

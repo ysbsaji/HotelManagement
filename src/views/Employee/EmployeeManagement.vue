@@ -1,6 +1,11 @@
 <template>
   <div>
     <div>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Employee Management</h3></v-banner>
     <form ref="empForm" lazy-validation>
       <v-card-text>
         <v-row>
@@ -44,7 +49,7 @@
       </v-card-actions>
     </form>
     </div>
-    <table-data :data="employeeDetails"/>
+    <table-data :data="employeeDetails" class="my-3 pa-3"/>
   </div>
 </template>
 

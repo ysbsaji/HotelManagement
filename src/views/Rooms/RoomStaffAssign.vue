@@ -1,5 +1,10 @@
 <template>
   <div>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Rooms Staff Assign</h3></v-banner>
     <form ref="roomAllocationForm" class="my-6 pa-4">
       <v-row>
         <v-col cols="3">
@@ -17,7 +22,7 @@
         </v-col>
       </v-row>
     </form>
-    <table-data :data="RoomsDetails"/>
+    <table-data :data="RoomsDetails" class="my-3 pa-3"/>
   </div>
 </template>
 
@@ -80,7 +85,13 @@ export default {
     },
     delAllocateDetails(details){
       details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
+      details.title = 'roomStaff'
       this.$store.commit('showDelDialog', details)
+      this.$root.$on('statusChange', async (data) => {
+        let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json')
+        rooms.bookingStatus = data
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json', rooms)
+      })
     },
     updateAllocateStaffToRoom(){
       let empDetails = {}
@@ -98,13 +109,16 @@ export default {
         for(let i in cusDetails){
           delete cusDetails[i].id
         }
-        this.customerDetails = this.getArrayObjFromObjList(cusDetails)  
+        this.customerDetails = this.getArrayObjFromObjList(cusDetails)
       }
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
       this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
     }
+  },
+  beforeDestroy () {
+    this.$root.$off('statusChange')
   }
 }
 </script>

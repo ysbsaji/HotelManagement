@@ -30,6 +30,7 @@
             <v-card-actions>
               <v-btn
                 color="deep-purple lighten-2"
+                :disabled="item.bookingStatus"
                 @click="orderedTableDetails.tableNumber = item.tableNumber; orderedTableDetails.tableId = item.id; foodOrderDialog = true"
               >
                 Order Now
@@ -121,14 +122,18 @@ export default {
         }
       })
     },
-    saveSelectedFood(){
+    async saveSelectedFood(){
       this.foodOrderDialog = false
       let orderedList = []
       this.foodTableDetails.list.forEach(val => {
         val.quantity > 0 ? (delete val.id, orderedList.push(val)) : false 
       })
+      let details = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId + '.json')
+      details.bookingStatus = true
+      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId  + '.json', details)
+      this.getDetails()
       let foodDetails = { ...orderedList, ...this.orderedTableDetails}
-      this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json',foodDetails)
+      await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json',foodDetails)
     }
   },
   mounted () {

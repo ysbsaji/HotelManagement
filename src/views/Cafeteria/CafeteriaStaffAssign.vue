@@ -1,5 +1,10 @@
 <template>
   <div>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Cafeteria Staff Assign</h3></v-banner>
     <form ref="cafeAllocationForm" class="my-6 pa-4">
       <v-row>
         <v-col cols="3">
@@ -17,7 +22,7 @@
         </v-col>
       </v-row>
     </form>
-    <table-data :data="foodDetails"/>
+    <table-data :data="foodDetails" class="my-3 pa-3"/>
   </div>
 </template>
 
@@ -109,8 +114,14 @@ export default {
       this.selectCustomer = true
     },
     delAllocateStaffForOrder (details) {
+      details.title = 'cafeStaff'
       details.url = 'https://traineesapi.firebaseio.com/cafeOrderAllocation/' + details.orderId + '.json'
       this.$store.commit('showDelDialog', details)
+       this.$root.$on('statusChange', async (data) => {
+      let details1 = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId + '.json')
+      details1.bookingStatus = data
+      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)
+      })
     }
   }
 }

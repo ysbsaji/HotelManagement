@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1 class="mt-3">Cafeteria Table Creation:</h1>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Cafeteria Management</h3></v-banner>
     <v-form ref="cafeForm" class="my-3 pa-3">
       <v-row>
         <v-col cols="12" sm="6" md="3">
@@ -18,8 +22,12 @@
         </v-col>
       </v-row>
     </v-form>
-    <table-data :data="cafeTableDetails"/>
-    <h1 class="mt-3"> Food </h1>
+    <table-data :data="cafeTableDetails" class="my-3 pa-3"/>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Food Management</h3></v-banner>
     <v-form ref="cafeForm" class="my-3 pa-3">
       <v-row>
         <v-col cols="12" sm="6" md="4">
@@ -34,7 +42,7 @@
         </v-col>
       </v-row>
     </v-form>
-    <table-data :data="foodTableDetails"/>
+    <table-data :data="foodTableDetails" class="my-3 pa-3"/>
   </div>
 </template>
 

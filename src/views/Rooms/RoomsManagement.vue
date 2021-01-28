@@ -1,5 +1,10 @@
 <template>
   <v-app>
+    <v-banner
+      color="red"
+      style="border-radius: 3px"
+      class="my-3 ma-2"
+    ><h3>Rooms Management</h3></v-banner>
     <v-form
       ref="roomsForm"
       lazy-validation
@@ -44,7 +49,7 @@
         </v-row>
       </v-card-actions>
     </v-form>
-    <table-data :data="RoomsDetails"/>
+    <table-data :data="RoomsDetails" class="my-3 pa-3"/>
   </v-app>
 </template>
 

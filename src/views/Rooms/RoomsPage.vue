@@ -15,9 +15,7 @@
               height="250"
               :src="item.image"
             ></v-img>
-
             <v-card-title>Room Details</v-card-title>
-
             <v-card-text>
               <p><b>Room Number:</b> {{ item.roomNumber }} </p>
               <p><b>Room Type:</b> {{ item.roomType }} </p>
@@ -25,27 +23,19 @@
               <p><b>Maximum Person Allowed:</b> {{ item.maxPerson }} </p>
               <p><b>Room Rate:</b> {{ item.rate }} </p>
             </v-card-text>
-
             <v-divider class="mx-4"></v-divider>
-
             <v-card-title>Amenties</v-card-title>
-
             <v-card-text>
-              <v-chip-group
-                column
-              >
+              <v-chip-group column>
                 <v-chip>24 hours room service</v-chip>
-
                 <v-chip>swimming pool</v-chip>
-
                 <v-chip>TV</v-chip>
-
                 <v-chip>Extra bed</v-chip>
               </v-chip-group>
             </v-card-text>
-
             <v-card-actions>
               <v-btn
+                :disabled="item.bookingStatus"
                 color="deep-purple lighten-2"
                 @click="bookingRoom(item)"
               >
@@ -63,7 +53,6 @@
           <v-card-title class="headline grey lighten-2">
             Book Your Room Here.
           </v-card-title>
-
           <v-card-text>
             <form ref="roomBookingForm" class="mt-4">
               <v-text-field outlined dense label="Name" v-model="customerDetails.name"/>
@@ -111,15 +100,12 @@ export default {
       this.roomBokingDialog = true
       this.bookingRoomDetails = roomdetails
     },
-    confirmYourBooking(){
+    async confirmYourBooking(){
+      this.bookingRoomDetails.bookingStatus = true
+      this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
+      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
       let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
-      this.$http.post('https://traineesapi.firebaseio.com/bookedrooms.json', JSON.stringify(bookedRoomDetails))
-      .then((response) => {
-        console.log(response)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
     },
     async getDetails(){
       let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')

@@ -51,7 +51,6 @@ export default {
       .catch((error) => {
         return error
       })
-      console.log(result)
       return result
     },
   //   async getImageUrl(file){
