@@ -50,7 +50,6 @@ export default {
   async getDetails(){
     let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
     this.userDetails = this.getArrayObjFromObjList(empDetails)
-    console.log(this.userDetails);
   }
   },
   mounted () {
