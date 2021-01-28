@@ -12,7 +12,7 @@ export default {
       })
       return resultArray
     },
-    getDetailsFromApi(url){
+    getDetailsFromApi (url) {
       let result = this.$http.get(url)
       .then((response) => {
         return response.data

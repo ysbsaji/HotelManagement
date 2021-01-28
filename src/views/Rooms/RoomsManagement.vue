@@ -88,7 +88,7 @@ export default {
     },
     async getTableDetails () {
       let roomDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
-      this.RoomsDetails.list = this.getArrayObjFromObjList(roomDetails)
+      if (roomDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(roomDetails)
     },
     editRoomDetails (roomdetails) {
       this.roomsFormDetails = Object.assign({}, roomdetails)
@@ -109,8 +109,8 @@ export default {
       this.$store.commit('showDelDialog', item)
       this.getTableDetails()
     },
-    getImageUrl(file){
-      if(file){
+    getImageUrl (file) {
+      if (file) {
         var reader = new FileReader();
         reader.addEventListener('load', (e) => {
           this.roomsFormDetails.image = e.target.result

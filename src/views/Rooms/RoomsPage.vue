@@ -21,7 +21,7 @@
               <p><b>Room Type:</b> {{ item.roomType }} </p>
               <p><b>Number of Bed:</b> {{ item.numberOfBed }} </p>
               <p><b>Maximum Person Allowed:</b> {{ item.maxPerson }} </p>
-              <p><b>Room Rate:</b> {{ item.rate }} &#x20B9;</p>
+              <p><b>Room Rate:</b> {{ item.rate | moneySymbol }}</p>
             </v-card-text>
             <v-divider class="mx-4"></v-divider>
             <v-card-title>Amenties</v-card-title>
@@ -54,11 +54,11 @@
             Book Your Room Here.
           </v-card-title>
           <v-card-text>
-            <form ref="roomBookingForm" class="mt-4" lazy-validation>
+            <v-form ref="cafeForm" class="mt-3" lazy-validation>
               <v-text-field outlined dense label="Name" v-model="customerDetails.name" :rules="requiredValidation"/>
               <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email" :rules="emailValidation"/>
               <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber" :rules="requiredValidation"/>
-            </form>
+            </v-form>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
@@ -73,11 +73,12 @@
             <v-btn
               color="primary"
               text
-              @click="roomBokingDialog = false"
+              @click="roomBokingDialog = false; $refs.cafeForm.reset()"
             >
               Cancel
             </v-btn>
           </v-card-actions>
+           
         </v-card>
     </v-dialog>
   </div>
@@ -91,38 +92,39 @@ export default {
       customerDetails: {},
       bookingRoomDetails: '',
       roomBokingDialog: false,
-      roomDetails: []
+      roomDetails: [],
     }
   },
   components: { NavigationBar },
   methods: {
-    bookingRoom(roomdetails){
+    bookingRoom (roomdetails) {
       this.roomBokingDialog = true
       this.bookingRoomDetails = roomdetails
     },
-    async confirmYourBooking(){
-      console.log(this.$refs.roomBookingForm);
-      this.$refs.roomBookingForm.validate()
-      this.roomBokingDialog = false
-      // this.bookingRoomDetails.bookingStatus = true
-      // this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
-      // await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
-      // let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
-      // await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
+    async confirmYourBooking () {
+      if (this.$refs.cafeForm.validate()) {
+        this.roomBokingDialog = false
+        this.bookingRoomDetails.bookingStatus = true
+        this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
+        let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
+        this.$refs.cafeForm.reset()
+      }
     },
-    async getDetails(){
+    async getDetails () {
       let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
-      this.roomDetails = this.getArrayObjFromObjList(details)
-    }
+      if (details) this.roomDetails = this.getArrayObjFromObjList(details)
+    },
   },
   mounted () {
     this.getDetails()
+  },
+  filters: {
+    moneySymbol (v) {
+      return v + ' ' + '₹'
+    },
   }
-  // filters: {
-  //   moneySymbol(v) {
-  //     return v +'&#8377;'
-  //   },
-  // }
 }
 </script>
 

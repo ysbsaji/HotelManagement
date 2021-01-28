@@ -6,8 +6,11 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Employee Management</h3></v-banner>
-    <form ref="empForm" lazy-validation>
-      <v-card-text>
+    <v-form
+      ref="empForm"
+      lazy-validation
+    >
+     <v-card-text>
         <v-row>
           <v-col cols="12" sm="6" md="4">
             <v-text-field outlined dense label="Name" v-model="empFormDetails.name" :rules="requiredValidation"/>
@@ -34,7 +37,7 @@
       <v-card-actions>
         <v-row>
           <v-col class="text-center">
-            <v-btn text>
+            <v-btn text @click="$refs.empForm.reset()">
               Cancel
             </v-btn>
             <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveEmpFromDetails">
@@ -46,7 +49,7 @@
           </v-col>
         </v-row>
       </v-card-actions>
-    </form>
+    </v-form>
     </div>
     <table-data :data="employeeDetails" class="my-3 pa-3"/>
   </div>
@@ -78,16 +81,19 @@ export default {
     }
   },
   methods: {
-    saveEmpFromDetails(){
-      this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
-      this.getTableDetails()
+    saveEmpFromDetails () {
+      if (this.$refs.empForm.validate()) {
+        this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
+        this.getTableDetails()
+        this.$refs.empForm.reset()
+      }
     },
-    async getTableDetails(){
+    async getTableDetails () {
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
-      this.employeeDetails.list = this.getArrayObjFromObjList(empDetails)
+      if(empDetails) this.employeeDetails.list = this.getArrayObjFromObjList(empDetails)
     },
-    getImageUrl(file){
-      if(file){
+    getImageUrl (file) {
+      if (file) {
         var reader = new FileReader();
         reader.addEventListener('load', (e) => {
           this.empFormDetails.image = e.target.result
@@ -95,16 +101,19 @@ export default {
         reader.readAsDataURL(file)
       }
     },
-    editEmpDetails(empDetails){
+    editEmpDetails (empDetails) {
       this.empFormDetails = Object.assign({}, empDetails)
       this.saveBtn = false
       this.updateBtn = true
     },
-    updateEmpFromDetails(){
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
-      this.getTableDetails()
-      this.saveBtn = true
-      this.updateBtn = false
+    updateEmpFromDetails () {
+      if (this.$refs.empForm.validate()) {
+        this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
+        this.getTableDetails()
+        this.saveBtn = true
+        this.updateBtn = false
+        this.$refs.empForm.reset()
+      }
     },
     delEmpDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/employeeDetails/' + item.id + '.json'

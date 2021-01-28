@@ -17,8 +17,9 @@
           <v-select :items="status" item-text="name" item-value="id" v-model="cafeAllocationDetails.status" outlined dense label="Status"></v-select>
         </v-col>
         <v-col cols="3">
-          <v-btn class="mx-3" color="#EF5350" @click="saveAllocateStaffForOrder">Save</v-btn>
-          <v-btn class="mx-3" color="#EF5350" @click="updateAllocateStaffForOrder">Update</v-btn>
+          <v-btn text @click="cancelForm">Cancel</v-btn>
+          <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveAllocateStaffForOrder">Save</v-btn>
+          <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateAllocateStaffForOrder">Update</v-btn>
         </v-col>
       </v-row>
     </form>
@@ -32,6 +33,8 @@ export default {
   components: { TableData },
   data () {
     return {
+      saveBtn: true,
+      updateBtn: false,
       status: ['Ordered', 'Got Ready', 'Deliverd'],
       updateDetail: {},
       selectCustomer: false,
@@ -61,7 +64,7 @@ export default {
       let orderedDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json')
       if (orderedDetails) this.orderedFoodList = this.getArrayObjFromObjList(orderedDetails)
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
-      this.employeeDetails = this.getArrayObjFromObjList(empDetails)
+      if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json')
       for(let i in allocationDetails){
         allocationDetails[i].forEach(val =>{ 
@@ -94,9 +97,11 @@ export default {
       }
       await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json',orderedDetails)
       await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails/' + this.cafeAllocationDetails.id + '.json')
+      this.cancelForm()
     },
     updateAllocateStaffForOrder () {
-      this.updateDetail
+      this.saveBtn = true
+      this.updateBtn = false
       let empDetails = {}
       let data = []
       this.employeeDetails.forEach(val => {
@@ -106,8 +111,11 @@ export default {
         val.orderId === this.updateDetail.orderId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, val.status = this.cafeAllocationDetails.status, data.push(val)) : false
       })
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation/' + this.updateDetail.orderId + '.json', data)
+      this.cancelForm()
     },
     editAllocateStaffForOrder (details) {
+      this.saveBtn = false
+      this.updateBtn = true
       this.updateDetail = details
       this.cafeAllocationDetails.employeeId = details.employeeId
       this.cafeAllocationDetails.status = details.status
@@ -122,6 +130,10 @@ export default {
         details1.bookingStatus = data
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)
       })
+    },
+    cancelForm () {
+      this.cafeAllocationDetails = {}
+      this.selectCustomer = false
     }
   },
   beforeDestroy () {

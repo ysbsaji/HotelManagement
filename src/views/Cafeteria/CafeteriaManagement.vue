@@ -64,12 +64,12 @@ export default {
         ],
         list: [],
         actionsList:[{
-            click: (item) => this.editCafeDetails(item),
-            icon:'mdi-pencil'
-          },{
-            click: (item) => this.delCafeDetails(item),
-            icon:'mdi-delete'
-          }]
+          click: (item) => this.editCafeDetails(item),
+          icon:'mdi-pencil'
+        },{
+          click: (item) => this.delCafeDetails(item),
+          icon:'mdi-delete'
+        }]
       },
       foodTableDetails: {
         headers: [
@@ -77,12 +77,12 @@ export default {
         ],
         list: [],
         actionsList:[{
-            click: (item) => this.editFoodDetails(item),
-            icon:'mdi-pencil'
-          },{
-            click: (item) => this.delFoodDetails(item),
-            icon:'mdi-delete'
-          }]
+          click: (item) => this.editFoodDetails(item),
+          icon:'mdi-pencil'
+        },{
+          click: (item) => this.delFoodDetails(item),
+          icon:'mdi-delete'
+        }]
       },
     }
   },
@@ -95,7 +95,7 @@ export default {
       }
     },
     getImageUrl (file) {
-      if(file){
+      if (file) {
         var reader = new FileReader();
         reader.addEventListener('load', (e) => {
           this.cafeFormDetails.image = e.target.result
@@ -124,9 +124,9 @@ export default {
     },
     async getTableDetails () {
       let cafeDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json')
-      this.cafeTableDetails.list = this.getArrayObjFromObjList(cafeDetails)
+      if (cafeDetails) this.cafeTableDetails.list = this.getArrayObjFromObjList(cafeDetails)
       let foodDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/foodDetails.json')
-      this.foodTableDetails.list = this.getArrayObjFromObjList(foodDetails)
+      if (foodDetails) this.foodTableDetails.list = this.getArrayObjFromObjList(foodDetails)
     },
     saveFoodDetails () {
       if (this.$refs.foodForm.validate()) {

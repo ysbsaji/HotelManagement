@@ -104,25 +104,25 @@ export default {
     }
   },
   methods: {
-    async getDetails(){
+    async getDetails () {
       let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json')
-      this.cafeDetails = this.getArrayObjFromObjList(details)
+      if (details) this.cafeDetails = this.getArrayObjFromObjList(details)
       let fooddetails =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/foodDetails.json')
-      this.foodTableDetails.list = this.getArrayObjFromObjList(fooddetails)
+      if (fooddetails) this.foodTableDetails.list = this.getArrayObjFromObjList(fooddetails)
     },
-    addQuantity(item){
+    addQuantity (item) {
       this.foodTableDetails.list.forEach(val => {
         item.id === val.id ? (val.quantity++, val.price = val.quantity * val.rate) : false
       })
     },
-    minusQuantity(item){
+    minusQuantity (item) {
       this.foodTableDetails.list.forEach(val => {
         if (item.id === val.id) {
           val.quantity !== 0 ? (val.quantity--, val.price = val.quantity * val.rate) : false
         }
       })
     },
-    async saveSelectedFood(){
+    async saveSelectedFood () {
       this.foodOrderDialog = false
       let orderedList = []
       this.foodTableDetails.list.forEach(val => {

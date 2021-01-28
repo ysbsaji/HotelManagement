@@ -17,8 +17,9 @@
           <v-select :items="status" v-model="roomAllocationDetails.status" outlined dense label="Status"></v-select>
         </v-col>
         <v-col cols="3">
-          <v-btn class="mx-3" color="#EF5350" @click="saveAllocateStaffToRoom">Save</v-btn>
-           <v-btn class="mx-3" color="#EF5350" @click="updateAllocateStaffToRoom">Update</v-btn>
+          <v-btn text @click="cancelForm">Cancel</v-btn>
+          <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveAllocateStaffToRoom">Save</v-btn>
+           <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateAllocateStaffToRoom">Update</v-btn>
         </v-col>
       </v-row>
     </form>
@@ -32,6 +33,8 @@ export default {
   components: { TableData },
   data () {
     return {
+      saveBtn: true,
+      updateBtn: false,
       status: ['CheckIn', 'CheckOut'],
       selectCustomer: false,
       roomAllocationDetails: {},
@@ -44,12 +47,12 @@ export default {
         ],
         list: [],
         actionsList:[{
-            click: (item) => this.editAllocateDetails(item),
-            icon:'mdi-pencil'
-          },{
-            click: (item) => this.delAllocateDetails(item),
-            icon:'mdi-delete'
-          }]
+          click: (item) => this.editAllocateDetails(item),
+          icon:'mdi-pencil'
+        },{
+          click: (item) => this.delAllocateDetails(item),
+          icon:'mdi-delete'
+        }]
       },
     }
   },
@@ -57,7 +60,7 @@ export default {
     this.getDetailOfBookingRooms()
   },
   methods: {
-    async saveAllocateStaffToRoom(){
+    async saveAllocateStaffToRoom () {
       let cusDetails = {}
       let empDetails = {}
       this.customerDetails.forEach(val => {
@@ -74,8 +77,12 @@ export default {
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
       this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
       await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms/' + this.roomAllocationDetails.customerId + '.json')
+      await this.getDetailOfBookingRooms()
+      this.cancelForm()
     },
-    editAllocateDetails(details){
+    editAllocateDetails (details) {
+      this.saveBtn = false
+      this.updateBtn = true
       this.updateDetail = details
       this.selectCustomer = true
       this.roomAllocationDetails.status = details.status
@@ -83,7 +90,7 @@ export default {
         val.id === details.employeeId ?( this.roomAllocationDetails.employeeId = val.id ): false
       })
     },
-    delAllocateDetails(details){
+    delAllocateDetails (details) {
       details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
       details.title = 'roomStaff'
       this.$store.commit('showDelDialog', details)
@@ -93,7 +100,9 @@ export default {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json', rooms)
       })
     },
-    updateAllocateStaffToRoom(){
+    updateAllocateStaffToRoom () {
+      this.saveBtn = true
+      this.updateBtn = false
       let empDetails = {}
       this.employeeDetails.forEach(val => {
         val.id === this.roomAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
@@ -102,8 +111,9 @@ export default {
       this.updateDetail.employeeId = empDetails.id
       this.updateDetail.status = this.roomAllocationDetails.status
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation/' + this.updateDetail.id + '.json', this.updateDetail)
+      this.cancelForm()
     },
-    async getDetailOfBookingRooms(){
+    async getDetailOfBookingRooms () {
       let cusDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
       if (cusDetails) {
         for(let i in cusDetails){
@@ -112,9 +122,13 @@ export default {
         this.customerDetails = this.getArrayObjFromObjList(cusDetails)
       }
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
-      this.employeeDetails = this.getArrayObjFromObjList(empDetails)
+      if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
-      this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
+      if (allocationDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
+    },
+    cancelForm () {
+      this.roomAllocationDetails = {}
+      this.selectCustomer = false
     }
   },
   beforeDestroy () {
