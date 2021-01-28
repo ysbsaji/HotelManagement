@@ -28,7 +28,7 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Food Management</h3></v-banner>
-    <v-form ref="cafeForm" class="my-3 pa-3">
+    <v-form ref="foodForm" class="my-3 pa-3">
       <v-row>
         <v-col cols="12" sm="6" md="4">
           <v-text-field outlined dense label="Food Name" v-model="foodDetails.foodName" :rules="requiredValidation"/>
@@ -88,8 +88,11 @@ export default {
   },
   methods: {
     saveCafeDetails () {
-      this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json',this.cafeFormDetails)
-      this.getTableDetails()
+      if (this.$refs.cafeForm.validate()) {
+        this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json',this.cafeFormDetails)
+        this.getTableDetails()
+        this.$refs.cafeForm.reset()
+      }
     },
     getImageUrl (file) {
       if(file){
@@ -106,10 +109,13 @@ export default {
       this.updateBtn = true
     },
     updateCafeDetails () {
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.cafeFormDetails.id + '.json', this.cafeFormDetails)
-      this.getTableDetails()
-      this.saveBtn = true
-      this.updateBtn = false
+      if (this.$refs.cafeForm.validate()) {
+        this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.cafeFormDetails.id + '.json', this.cafeFormDetails)
+        this.getTableDetails()
+        this.saveBtn = true
+        this.updateBtn = false
+        this.$refs.cafeForm.reset()
+      }
     },
     delCafeDetails (cafeDetails) {
       cafeDetails.url = 'https://traineesapi.firebaseio.com/cafeteriaDetails/' + cafeDetails.id + '.json'
@@ -123,10 +129,13 @@ export default {
       this.foodTableDetails.list = this.getArrayObjFromObjList(foodDetails)
     },
     saveFoodDetails () {
-      this.foodDetails.quantity = 0
-      this.foodDetails.price = 0
-      this.postDetailsToApi('https://traineesapi.firebaseio.com/foodDetails.json',this.foodDetails)
-      this.getTableDetails()
+      if (this.$refs.foodForm.validate()) {
+        this.foodDetails.quantity = 0
+        this.foodDetails.price = 0
+        this.postDetailsToApi('https://traineesapi.firebaseio.com/foodDetails.json',this.foodDetails)
+        this.getTableDetails()
+        this.$refs.foodForm.reset()
+      }
     },
     editFoodDetails (foodDetails) {
       this.foodDetails = Object.assign({}, foodDetails)
@@ -134,10 +143,13 @@ export default {
       this.updateBtn1 = true
     },
     updateFoodDetails () {
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
-      this.getTableDetails()
-      this.saveBtn1 = true
-      this.updateBtn1 = false
+      if (this.$refs.foodForm.validate()) {
+        this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
+        this.getTableDetails()
+        this.saveBtn1 = true
+        this.updateBtn1 = false
+        this.$refs.foodForm.reset()
+      }
     },
     delFoodDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/foodDetails/' + item.id + '.json'

@@ -31,7 +31,6 @@
           </v-col>
         </v-row>
       </v-card-text>
-
       <v-card-actions>
         <v-row>
           <v-col class="text-center">

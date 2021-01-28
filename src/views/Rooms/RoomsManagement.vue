@@ -12,7 +12,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="6" md="4">
-            <v-text-field outlined dense label="Room Number" v-model="roomsFormDetails.roomNumber" :rules="requiredValidation"/>
+            <v-text-field outlined dense label="Room Number" v-model="roomsFormDetails.roomNumber" type="number" :rules="requiredValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <v-text-field outlined dense type="number" label="Number of bed" v-model="roomsFormDetails.numberOfBed" :rules="requiredValidation"/>
@@ -68,12 +68,12 @@ export default {
         ],
         list: [],
         actionsList:[{
-            click: (item) => this.editRoomDetails(item),
-            icon:'mdi-pencil'
-          },{
-            click: (item) => this.delRoomDetails(item),
-            icon:'mdi-delete'
-          }]
+          click: (item) => this.editRoomDetails(item),
+          icon:'mdi-pencil'
+        },{
+          click: (item) => this.delRoomDetails(item),
+          icon:'mdi-delete'
+        }]
       },
       roomsFormDetails: {}
     }

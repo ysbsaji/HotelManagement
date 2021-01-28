@@ -117,12 +117,15 @@ export default {
       details.title = 'cafeStaff'
       details.url = 'https://traineesapi.firebaseio.com/cafeOrderAllocation/' + details.orderId + '.json'
       this.$store.commit('showDelDialog', details)
-       this.$root.$on('statusChange', async (data) => {
-      let details1 = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId + '.json')
-      details1.bookingStatus = data
-      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)
+      this.$root.$on('statusChange', async (data) => {
+        let details1 = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId + '.json')
+        details1.bookingStatus = data
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)
       })
     }
+  },
+  beforeDestroy () {
+    this.$root.$off('statusChange')
   }
 }
 </script>

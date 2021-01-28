@@ -32,6 +32,17 @@
 
     <v-app-bar elevation="0" app color="#e74c3c" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-spacer></v-spacer>
+      <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+      <v-avatar
+        size="56"
+        v-on="on"
+        @click="logout"
+      > <v-icon>mdi-logout</v-icon></v-avatar>
+      </template>
+      <span>Log Out</span>
+      </v-tooltip>
     </v-app-bar>
     <v-main>
 			<v-container fluid class="pa-0">
@@ -101,6 +112,9 @@ export default {
       if(this.$store.state.delDetails.title){
         this.$root.$emit('statusChange', false)
       }
+    },
+    logout(){
+      this.$router.push('signuppage')
     }
   },
   mounted () {

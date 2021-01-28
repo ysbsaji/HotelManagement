@@ -21,7 +21,7 @@
               <p><b>Room Type:</b> {{ item.roomType }} </p>
               <p><b>Number of Bed:</b> {{ item.numberOfBed }} </p>
               <p><b>Maximum Person Allowed:</b> {{ item.maxPerson }} </p>
-              <p><b>Room Rate:</b> {{ item.rate }} </p>
+              <p><b>Room Rate:</b> {{ item.rate }} &#x20B9;</p>
             </v-card-text>
             <v-divider class="mx-4"></v-divider>
             <v-card-title>Amenties</v-card-title>
@@ -54,10 +54,10 @@
             Book Your Room Here.
           </v-card-title>
           <v-card-text>
-            <form ref="roomBookingForm" class="mt-4">
-              <v-text-field outlined dense label="Name" v-model="customerDetails.name"/>
-              <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email"/>
-              <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber"/>
+            <form ref="roomBookingForm" class="mt-4" lazy-validation>
+              <v-text-field outlined dense label="Name" v-model="customerDetails.name" :rules="requiredValidation"/>
+              <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email" :rules="emailValidation"/>
+              <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber" :rules="requiredValidation"/>
             </form>
           </v-card-text>
           <v-divider></v-divider>
@@ -101,11 +101,14 @@ export default {
       this.bookingRoomDetails = roomdetails
     },
     async confirmYourBooking(){
-      this.bookingRoomDetails.bookingStatus = true
-      this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
-      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
-      let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
-      await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
+      console.log(this.$refs.roomBookingForm);
+      this.$refs.roomBookingForm.validate()
+      this.roomBokingDialog = false
+      // this.bookingRoomDetails.bookingStatus = true
+      // this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
+      // await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
+      // let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
+      // await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
     },
     async getDetails(){
       let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
@@ -114,12 +117,12 @@ export default {
   },
   mounted () {
     this.getDetails()
-  },
-  filters: {
-    moneySymbol(v) {
-      return v +'&#8377;'
-    },
   }
+  // filters: {
+  //   moneySymbol(v) {
+  //     return v +'&#8377;'
+  //   },
+  // }
 }
 </script>
 
