@@ -126,6 +126,9 @@ export default {
       details.url = 'https://traineesapi.firebaseio.com/cafeOrderAllocation/' + details.orderId + '.json'
       this.$store.commit('showDelDialog', details)
       this.$root.$on('statusChange', async (data) => {
+        this.foodDetails.list.forEach((val, index) => {
+          val.tableId === details.tableId ? this.foodDetails.list.splice(index,1) : false
+        })
         let details1 = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId + '.json')
         details1.bookingStatus = data
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)

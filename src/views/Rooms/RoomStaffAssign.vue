@@ -91,10 +91,14 @@ export default {
       })
     },
     delAllocateDetails (details) {
+      console.log(details)
       details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
       details.title = 'roomStaff'
       this.$store.commit('showDelDialog', details)
       this.$root.$on('statusChange', async (data) => {
+        this.RoomsDetails.list.forEach((val, index) => {
+          val.id === details.id ? this.RoomsDetails.list.splice(index, 1) : false
+        })
         let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json')
         rooms.bookingStatus = data
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json', rooms)
