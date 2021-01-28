@@ -46,14 +46,9 @@ const routes = [
     component: () => import(/* webpackChunkName: "CafeteriaManagement" */ '../views/Cafeteria/CafeteriaStaffAssign.vue')
   },
   {
-    path: '/customermanagement',
-    name: 'CustomerManagement',
-    component: () => import(/* webpackChunkName: "CustomerManagement" */ '../views/EmployeeAndCustomer/CustomerManagement.vue')
-  },
-  {
     path: '/employeemanagement',
     name: 'EmployeeManagement',
-    component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/EmployeeAndCustomer/EmployeeManagement.vue')
+    component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/Employee/EmployeeManagement.vue')
   },
 ]
 

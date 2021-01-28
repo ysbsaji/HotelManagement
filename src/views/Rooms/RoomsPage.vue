@@ -128,6 +128,11 @@ export default {
   },
   mounted () {
     this.getDetails()
+  },
+  filters: {
+    moneySymbol(v) {
+      return v +'&#8377;'
+    },
   }
 }
 </script>

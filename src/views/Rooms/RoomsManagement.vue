@@ -31,7 +31,7 @@
       <v-card-actions>
         <v-row>
           <v-col class="text-center">
-            <v-btn text>
+            <v-btn text @click="$refs.roomsForm.reset()">
               Cancel
             </v-btn>
             <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveRoomDetails">

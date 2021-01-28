@@ -2,13 +2,16 @@
   <div>
     <form ref="cafeAllocationForm" class="my-6 pa-4">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-select :items="orderedFoodList" item-text="tableNumber" v-model="cafeAllocationDetails.id" :disabled="selectCustomer" item-value="id" outlined dense label="Customer"></v-select>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="cafeAllocationDetails.employeeId" outlined dense label="Employee"></v-select>
         </v-col>
-        <v-col cols="4">
+         <v-col cols="3">
+          <v-select :items="status" item-text="name" item-value="id" v-model="cafeAllocationDetails.status" outlined dense label="Status"></v-select>
+        </v-col>
+        <v-col cols="3">
           <v-btn class="mx-3" color="#EF5350" @click="saveAllocateStaffForOrder">Save</v-btn>
           <v-btn class="mx-3" color="#EF5350" @click="updateAllocateStaffForOrder">Update</v-btn>
         </v-col>
@@ -24,6 +27,7 @@ export default {
   components: { TableData },
   data () {
     return {
+      status: ['Ordered', 'Got Ready', 'Deliverd'],
       updateDetail: {},
       selectCustomer: false,
       cafeAllocationDetails: {},
@@ -31,7 +35,7 @@ export default {
       employeeDetails: [],
       foodDetails: {
         headers: [
-          { text: 'Table Number', value: 'tableNumber' }, { text: 'Food', value: 'foodName' }, { text: 'Quantity', value: 'quantity' }, { text: 'Price', value: 'price' }, { text: 'Employee Name', value: 'empName' }, { text: 'Actions', value: 'actions'}
+          { text: 'Table Number', value: 'tableNumber' }, { text: 'Food', value: 'foodName' }, { text: 'Quantity', value: 'quantity' }, { text: 'Price', value: 'price' }, { text: 'Employee Name', value: 'empName' }, { text: 'Food Status', value: 'status' }, { text: 'Actions', value: 'actions'}
         ],
         list: [],
         actionsList:[{
@@ -80,6 +84,7 @@ export default {
         orderedDetails[i].tableId = tableId
         orderedDetails[i].empName = empDetails.name
         orderedDetails[i].employeeId = empDetails.id
+        orderedDetails[i].status = this.cafeAllocationDetails.status
         this.foodDetails.list.push(orderedDetails[i])
       }
       await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json',orderedDetails)
@@ -93,13 +98,14 @@ export default {
         val.id === this.cafeAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
       })
       this.foodDetails.list.forEach(val => {
-        val.orderId === this.updateDetail.orderId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, data.push(val)) : false
+        val.orderId === this.updateDetail.orderId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, val.status = this.cafeAllocationDetails.status, data.push(val)) : false
       })
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation/' + this.updateDetail.orderId + '.json', data)
     },
     editAllocateStaffForOrder (details) {
       this.updateDetail = details
       this.cafeAllocationDetails.employeeId = details.employeeId
+      this.cafeAllocationDetails.status = details.status
       this.selectCustomer = true
     },
     delAllocateStaffForOrder (details) {

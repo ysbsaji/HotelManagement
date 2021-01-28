@@ -2,13 +2,16 @@
   <div>
     <form ref="roomAllocationForm" class="my-6 pa-4">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-select :items="customerDetails" item-text="name" v-model="roomAllocationDetails.customerId" :disabled="selectCustomer" item-value="id" outlined dense label="Customer"></v-select>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="roomAllocationDetails.employeeId" outlined dense label="Employee"></v-select>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="3">
+          <v-select :items="status" v-model="roomAllocationDetails.status" outlined dense label="Status"></v-select>
+        </v-col>
+        <v-col cols="3">
           <v-btn class="mx-3" color="#EF5350" @click="saveAllocateStaffToRoom">Save</v-btn>
            <v-btn class="mx-3" color="#EF5350" @click="updateAllocateStaffToRoom">Update</v-btn>
         </v-col>
@@ -24,6 +27,7 @@ export default {
   components: { TableData },
   data () {
     return {
+      status: ['CheckIn', 'CheckOut'],
       selectCustomer: false,
       roomAllocationDetails: {},
       customerDetails: [],
@@ -31,7 +35,7 @@ export default {
       updateDetail: {},
       RoomsDetails: {
         headers: [
-          { text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Employee Name', value: 'empName' }, { text: 'Actions', value: 'actions'}
+          { text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Employee Name', value: 'empName' }, { text: 'Room Status', value: 'status' }, { text: 'Actions', value: 'actions'}
         ],
         list: [],
         actionsList:[{
@@ -60,6 +64,7 @@ export default {
       delete cusDetails.id
       cusDetails.empName = empDetails.name
       cusDetails.employeeId = empDetails.id
+      cusDetails.status = this.roomAllocationDetails.status
       await this.postDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation.json',cusDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
       this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
@@ -68,6 +73,7 @@ export default {
     editAllocateDetails(details){
       this.updateDetail = details
       this.selectCustomer = true
+      this.roomAllocationDetails.status = details.status
       this.employeeDetails.forEach(val => {
         val.id === details.employeeId ?( this.roomAllocationDetails.employeeId = val.id ): false
       })
@@ -83,6 +89,7 @@ export default {
       })
       this.updateDetail.empName = empDetails.name
       this.updateDetail.employeeId = empDetails.id
+      this.updateDetail.status = this.roomAllocationDetails.status
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation/' + this.updateDetail.id + '.json', this.updateDetail)
     },
     async getDetailOfBookingRooms(){
