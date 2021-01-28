@@ -25,12 +25,10 @@ export default {
 </script>
 
 <style scoped>
-
 .btn:hover, .btn:focus {
   color: #fff;
   outline: 0;
 }
-
 .btnHover {
   -webkit-transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
   transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;

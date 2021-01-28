@@ -21,9 +21,6 @@
       <v-layout column align-center justify-center>
         <div class="headline white--text mb-3 text-xs-center">Powering Your Online Revenue</div>
         <em>Hospitality Technology Solutions to attract, convert, analyse and maximise your bookings.</em>
-        <v-btn class="blue lighten-2 mt-5" dark large>
-          Get more info
-        </v-btn>
       </v-layout>
     </v-parallax>
     <v-row>
@@ -49,7 +46,7 @@
     </v-row>
     <v-parallax :src="imageLink.social_cover" height="380">
       <v-layout column align-center justify-center>
-        <div class="headline white--text mb-3 text-xs-center">We are dropping cool news and opportunities on socials</div>
+        <div class="headline white--text mb-3 text-xs-center">We are dropping cool news on socials</div>
       </v-layout>
       <v-layout justify-space-around justify-center>
         <v-icon x-large dark>mdi-facebook</v-icon>

@@ -24,6 +24,17 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <v-snackbar v-model="snackbarForSignin">Wrong email or password
+      <template v-slot:action>
+        <v-btn
+          color="pink"
+          text
+          @click="snackbarForSignin = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -34,6 +45,7 @@ export default {
   components: { NavigationBar },
   data () {
     return {
+      snackbarForSignin: false,
       signInFormData: {},
       userDetails: []
     }
@@ -42,7 +54,10 @@ export default {
   signIn () {
     if (this.$refs.signinForm.validate()) {
       this.userDetails.forEach(val => {
-        if(val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) this.$router.push('roomsmanagement'), this.$refs.signinForm.reset()
+        if (val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) {
+          this.$router.push('roomsmanagement')
+          this.$refs.signinForm.reset()
+        }else { this.snackbarForSignin = true }
       })
     }
   },

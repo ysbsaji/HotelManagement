@@ -16,7 +16,7 @@
             <v-text-field outlined dense label="Name" v-model="empFormDetails.name" :rules="requiredValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-text-field outlined dense type="email" label="Email" v-model="empFormDetails.email" :rules="requiredValidation"/>
+            <v-text-field outlined dense type="email" label="Email" v-model="empFormDetails.email" :rules="emailValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <v-text-field outlined dense type="number" label="Phone Number" v-model="empFormDetails.phoneNumber" :rules="requiredValidation"/>
@@ -27,7 +27,7 @@
             <v-select :items="role" outlined dense label="Role" v-model="empFormDetails.role" :rules="requiredValidation"></v-select>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-text-field outlined dense type="password" label="Password" v-model="empFormDetails.password" :rules="requiredValidation"/>
+            <v-text-field outlined dense type="password" label="Password" v-model="empFormDetails.password" :rules="passwordValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="empFormDetails.file" @change="getImageUrl(empFormDetails.file[0])" :rules="requiredValidation"/>

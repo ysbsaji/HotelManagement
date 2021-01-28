@@ -98,7 +98,6 @@ export default {
         { title: 'Employee', icon: 'mdi-account-supervisor', link:'/employeemanagement' }
       ]
     }
-    //{ title: 'Cutomer', icon: 'mdi-account-outline', link:'/customermanagement' }
   },
   computed: {
     deleteDialog () {
