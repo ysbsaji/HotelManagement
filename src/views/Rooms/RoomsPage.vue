@@ -33,14 +33,19 @@
                 <v-chip>Extra bed</v-chip>
               </v-chip-group>
             </v-card-text>
+            <v-divider></v-divider>
             <v-card-actions>
-              <v-btn
-                :disabled="item.bookingStatus"
-                color="deep-purple lighten-2"
-                @click="bookingRoom(item)"
-              >
-                Book Now
-              </v-btn>
+              <v-list-item>
+                <v-row justify="center">
+                  <v-btn
+                    :disabled="item.bookingStatus"
+                    color="deep-purple lighten-2"
+                    @click="bookingRoom(item)"
+                  >
+                    Book Now
+                  </v-btn>
+                </v-row>
+              </v-list-item>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -119,11 +124,6 @@ export default {
   },
   mounted () {
     this.getDetails()
-  },
-  filters: {
-    moneySymbol (v) {
-      return v + ' ' + '₹'
-    },
   }
 }
 </script>

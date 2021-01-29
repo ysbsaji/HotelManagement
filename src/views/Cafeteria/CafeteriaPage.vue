@@ -28,13 +28,17 @@
 
             <v-divider class="mx-4"></v-divider>
             <v-card-actions>
-              <v-btn
-                color="deep-purple lighten-2"
-                :disabled="item.bookingStatus"
-                @click="orderedTableDetails.tableNumber = item.tableNumber; orderedTableDetails.tableId = item.id; foodOrderDialog = true"
-              >
-                Order Now
-              </v-btn>
+              <v-list-item>
+                <v-row justify="center">
+                  <v-btn
+                    color="deep-purple lighten-2"
+                    :disabled="item.bookingStatus"
+                    @click="orderedTableDetails.tableNumber = item.tableNumber; orderedTableDetails.tableId = item.id; foodOrderDialog = true"
+                  >
+                    Order Now
+                  </v-btn>
+                </v-row>
+              </v-list-item>
             </v-card-actions>
           </v-card>
         </v-col>
