@@ -5,19 +5,19 @@
       :items="data.list"
       class="elevation-1"
     >
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-btn icon v-for="(action, index) in data.actionsList" text
         @click="action.click(item)" :key="index">
         <v-icon>{{ action.icon }}</v-icon>
       </v-btn>
     </template>
-     <template v-slot:item.rate="{ item }">
+     <template v-slot:[`item.rate`]="{ item }">
       {{ item.rate | moneySymbol }}
     </template>
-    <template v-slot:item.image="{ item }">
+    <template v-slot:[`item.image`]="{ item }">
       <img :src="item.image" alt="No image" width="40px">
     </template>
-    <template v-slot:item.name="{ item }">
+    <template v-slot:[`item.name`]="{ item }">
       {{ item.name | capitalize}}
     </template>
     </v-data-table>

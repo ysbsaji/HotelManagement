@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app color="white">
+    <v-app-bar app color="white" elevation="0">
       <v-avatar
         color="grey-lighten"
         size="60"

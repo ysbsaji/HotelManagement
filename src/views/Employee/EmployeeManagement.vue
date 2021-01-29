@@ -30,14 +30,14 @@
             <v-text-field outlined dense type="password" label="Password" v-model="empFormDetails.password" :rules="passwordValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="empFormDetails.file" @change="getImageUrl(empFormDetails.file[0])" :rules="requiredValidation"/>
+            <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="empFormDetails.file" @change="empFormDetails.file ? getImageUrl(empFormDetails.file[0]) : false" :rules="requiredValidation"/>
           </v-col>
         </v-row>
       </v-card-text>
       <v-card-actions>
         <v-row>
           <v-col class="text-center">
-            <v-btn text @click="$refs.empForm.reset()">
+            <v-btn text @click="$refs.empForm.reset(); saveBtn = true; updateBtn = false ">
               Cancel
             </v-btn>
             <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveEmpFromDetails">
@@ -81,9 +81,9 @@ export default {
     }
   },
   methods: {
-    saveEmpFromDetails () {
+    async saveEmpFromDetails () {
       if (this.$refs.empForm.validate()) {
-        this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
         this.getTableDetails()
         this.$refs.empForm.reset()
       }
@@ -107,9 +107,9 @@ export default {
       this.saveBtn = false
       this.updateBtn = true
     },
-    updateEmpFromDetails () {
+    async updateEmpFromDetails () {
       if (this.$refs.empForm.validate()) {
-        this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
         this.getTableDetails()
         this.saveBtn = true
         this.updateBtn = false

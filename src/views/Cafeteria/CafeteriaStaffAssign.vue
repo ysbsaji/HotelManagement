@@ -5,24 +5,24 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Cafeteria Staff Assign</h3></v-banner>
-    <form ref="cafeAllocationForm" class="my-6 pa-4">
+    <v-form ref="cafeAllocationForm" class="my-6 pa-4">
       <v-row>
         <v-col cols="3">
-          <v-select :items="orderedFoodList" item-text="tableNumber" v-model="cafeAllocationDetails.id" :disabled="selectCustomer" item-value="id" outlined dense label="Customer"></v-select>
+          <v-select :items="orderedFoodList" item-text="tableNumber" v-model="cafeAllocationDetails.id" :disabled="selectCustomer" :rules="requiredValidation" item-value="id" outlined dense label="Customer"></v-select>
         </v-col>
         <v-col cols="3">
-          <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="cafeAllocationDetails.employeeId" outlined dense label="Employee"></v-select>
+          <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="cafeAllocationDetails.employeeId" :rules="requiredValidation" outlined dense label="Employee"></v-select>
         </v-col>
-         <v-col cols="3">
-          <v-select :items="status" item-text="name" item-value="id" v-model="cafeAllocationDetails.status" outlined dense label="Status"></v-select>
+          <v-col cols="3">
+          <v-select :items="status" item-text="name" item-value="id" v-model="cafeAllocationDetails.status" :rules="requiredValidation" outlined dense label="Status"></v-select>
         </v-col>
         <v-col cols="3">
-          <v-btn text @click="cancelForm">Cancel</v-btn>
+          <v-btn text @click="selectCustomer = false; saveBtn = true; updateBtn = false; $refs.cafeAllocationForm.reset()">Cancel</v-btn>
           <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveAllocateStaffForOrder">Save</v-btn>
           <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateAllocateStaffForOrder">Update</v-btn>
         </v-col>
       </v-row>
-    </form>
+    </v-form>
     <table-data :data="foodDetails" class="my-3 pa-3"/>
   </div>
 </template>
@@ -74,30 +74,32 @@ export default {
       }
     },
     async saveAllocateStaffForOrder () {
-      let orderedDetails = {}
-      let empDetails = {}
-      this.orderedFoodList.forEach(val => {
-        val.id === this.cafeAllocationDetails.id ?  orderedDetails = Object.assign({}, val): false
-      })
-      this.employeeDetails.forEach(val => {
-        val.id === this.cafeAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
-      })
-      let tableId = orderedDetails.tableId
-      let tableNumber = orderedDetails.tableNumber
-      delete orderedDetails.tableId
-      delete orderedDetails.tableNumber
-      delete orderedDetails.id
-      for(let i in orderedDetails){
-        orderedDetails[i].tableNumber = tableNumber
-        orderedDetails[i].tableId = tableId
-        orderedDetails[i].empName = empDetails.name
-        orderedDetails[i].employeeId = empDetails.id
-        orderedDetails[i].status = this.cafeAllocationDetails.status
-        this.foodDetails.list.push(orderedDetails[i])
+      if (this.$refs.cafeAllocationForm.validate()){
+        let orderedDetails = {}
+        let empDetails = {}
+        this.orderedFoodList.forEach(val => {
+          val.id === this.cafeAllocationDetails.id ?  orderedDetails = Object.assign({}, val): false
+        })
+        this.employeeDetails.forEach(val => {
+          val.id === this.cafeAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
+        })
+        let tableId = orderedDetails.tableId
+        let tableNumber = orderedDetails.tableNumber
+        delete orderedDetails.tableId
+        delete orderedDetails.tableNumber
+        delete orderedDetails.id
+        for(let i in orderedDetails){
+          orderedDetails[i].tableNumber = tableNumber
+          orderedDetails[i].tableId = tableId
+          orderedDetails[i].empName = empDetails.name
+          orderedDetails[i].employeeId = empDetails.id
+          orderedDetails[i].status = this.cafeAllocationDetails.status
+          this.foodDetails.list.push(orderedDetails[i])
+        }
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json',orderedDetails)
+        await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails/' + this.cafeAllocationDetails.id + '.json')
+        this.$refs.cafeAllocationForm.reset()
       }
-      await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json',orderedDetails)
-      await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails/' + this.cafeAllocationDetails.id + '.json')
-      this.cancelForm()
     },
     updateAllocateStaffForOrder () {
       this.saveBtn = true
@@ -111,7 +113,6 @@ export default {
         val.orderId === this.updateDetail.orderId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, val.status = this.cafeAllocationDetails.status, data.push(val)) : false
       })
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation/' + this.updateDetail.orderId + '.json', data)
-      this.cancelForm()
     },
     editAllocateStaffForOrder (details) {
       this.saveBtn = false
@@ -134,10 +135,6 @@ export default {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId  + '.json', details1)
       })
     },
-    cancelForm () {
-      this.cafeAllocationDetails = {}
-      this.selectCustomer = false
-    }
   },
   beforeDestroy () {
     this.$root.$off('statusChange')

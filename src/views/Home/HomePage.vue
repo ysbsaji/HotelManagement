@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+  <v-container fluid>
       <NavigationBar/>
     <v-carousel hide-delimiters cycle>
       <v-carousel-item
@@ -17,7 +17,7 @@
         </v-col>
       </v-row>
     </div>
-    <v-parallax :src="imageLink.main" height="500">
+    <v-parallax :src="imageLink.main" height="500" width="100%">
       <v-layout column align-center justify-center>
         <div class="headline white--text mb-3 text-xs-center">Powering Your Online Revenue</div>
         <em>Hospitality Technology Solutions to attract, convert, analyse and maximise your bookings.</em>
@@ -44,7 +44,7 @@
         </v-form>
       </v-col>
     </v-row>
-    <v-parallax :src="imageLink.social_cover" height="380">
+    <v-parallax :src="imageLink.social_cover" height="380" width="100%" ref="img">
       <v-layout column align-center justify-center>
         <div class="headline white--text mb-3 text-xs-center">We are dropping cool news on socials</div>
       </v-layout>
@@ -74,6 +74,6 @@ export default {
         social_cover: "https://firebasestorage.googleapis.com/v0/b/endorfinevue.appspot.com/o/assets%2Fo-NIGHTCLUB-facebook.jpg?alt=media&token=cefc5c4c-9714-41da-9c22-f63caf5e89a4"
       }
     }
-  },
+  }
 }
 </script>

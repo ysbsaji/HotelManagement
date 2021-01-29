@@ -29,14 +29,14 @@
             <v-text-field outlined dense type="number" label="Max Person Allowed" v-model="roomsFormDetails.maxPerson" :rules="requiredValidation"/>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="roomsFormDetails.file" @change="getImageUrl(roomsFormDetails.file[0])" :rules="requiredValidation"/>
+            <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="roomsFormDetails.file" @change="roomsFormDetails.file ? getImageUrl(roomsFormDetails.file[0]) : false" :rules="requiredValidation"/>
           </v-col>
         </v-row>
       </v-card-text>
       <v-card-actions>
         <v-row>
           <v-col class="text-center">
-            <v-btn text @click="$refs.roomsForm.reset()">
+            <v-btn text @click="$refs.roomsForm.reset(); saveBtn = true; updateBtn = false ">
               Cancel
             </v-btn>
             <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveRoomDetails">

@@ -14,9 +14,10 @@
           <v-text-field outlined dense label="Total chairs" v-model="cafeFormDetails.totalChairs" :rules="requiredValidation"/>
         </v-col>
         <v-col cols="12" sm="6" md="3">
-          <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="cafeFormDetails.file" @change="getImageUrl(cafeFormDetails.file[0])" :rules="requiredValidation"/>
+          <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="cafeFormDetails.file" @change="cafeFormDetails.file ? getImageUrl(cafeFormDetails.file[0]) : false" :rules="requiredValidation"/>
         </v-col>
         <v-col cols="12" sm="6" md="3">
+          <v-btn text class="mx-3" @click="$refs.cafeForm.reset(); saveBtn = true; updateBtn = false ">Cancel</v-btn>
           <v-btn color="#EF5350" v-show="saveBtn" @click="saveCafeDetails">Save</v-btn>
           <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateCafeDetails" >Update</v-btn>
         </v-col>
@@ -37,6 +38,7 @@
           <v-text-field outlined dense label="Rate" type="number" v-model="foodDetails.rate" :rules="requiredValidation"/>
         </v-col>
         <v-col cols="12" sm="6" md="3">
+          <v-btn text class="mx-3" @click="$refs.foodForm.reset(); saveBtn1 = true; updateBtn1 = false ">Cancel</v-btn>
           <v-btn color="#EF5350" v-show="saveBtn1" @click="saveFoodDetails">Save</v-btn>
           <v-btn class="mx-3" color="#EF5350" v-show="updateBtn1" @click="updateFoodDetails" >Update</v-btn>
         </v-col>
@@ -87,9 +89,9 @@ export default {
     }
   },
   methods: {
-    saveCafeDetails () {
+    async saveCafeDetails () {
       if (this.$refs.cafeForm.validate()) {
-        this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json',this.cafeFormDetails)
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json',this.cafeFormDetails)
         this.getTableDetails()
         this.$refs.cafeForm.reset()
       }
@@ -109,9 +111,9 @@ export default {
       this.saveBtn = false
       this.updateBtn = true
     },
-    updateCafeDetails () {
+    async updateCafeDetails () {
       if (this.$refs.cafeForm.validate()) {
-        this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.cafeFormDetails.id + '.json', this.cafeFormDetails)
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.cafeFormDetails.id + '.json', this.cafeFormDetails)
         this.getTableDetails()
         this.saveBtn = true
         this.updateBtn = false
