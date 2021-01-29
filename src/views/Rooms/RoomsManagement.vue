@@ -92,11 +92,12 @@ export default {
     },
     editRoomDetails (roomdetails) {
       this.roomsFormDetails = Object.assign({}, roomdetails)
+      this.roomsFormDetails.file = [{}]
       this.saveBtn = false
       this.updateBtn = true
     },
     updateRoomDetails () {
-      if(this.$refs.roomsForm.validate()){
+      if(this.$refs.roomsForm.validate()) {
         this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.roomsFormDetails.id + '.json', this.roomsFormDetails)
         this.getTableDetails()
         this.saveBtn = true

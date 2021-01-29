@@ -105,6 +105,7 @@ export default {
     },
     editCafeDetails (cafeDetails) {
       this.cafeFormDetails = Object.assign({}, cafeDetails)
+      this.cafeFormDetails.file = [{}]
       this.saveBtn = false
       this.updateBtn = true
     },
@@ -143,13 +144,11 @@ export default {
       this.updateBtn1 = true
     },
     updateFoodDetails () {
-      if (this.$refs.foodForm.validate()) {
-        this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
-        this.getTableDetails()
-        this.saveBtn1 = true
-        this.updateBtn1 = false
-        this.$refs.foodForm.reset()
-      }
+      this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
+      this.getTableDetails()
+      this.saveBtn1 = true
+      this.updateBtn1 = false
+      this.$refs.foodForm.reset()
     },
     delFoodDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/foodDetails/' + item.id + '.json'

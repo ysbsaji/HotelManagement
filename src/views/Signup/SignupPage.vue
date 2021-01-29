@@ -55,7 +55,9 @@ export default {
     if (this.$refs.signinForm.validate()) {
       this.userDetails.forEach(val => {
         if (val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) {
-          this.$router.push('roomsmanagement')
+          localStorage.setItem('userDetails', JSON.stringify(val))
+          localStorage.setItem('authentication', true)
+          this.$router.push('roomstaffassign')
           this.$refs.signinForm.reset()
         }else { this.snackbarForSignin = true }
       })

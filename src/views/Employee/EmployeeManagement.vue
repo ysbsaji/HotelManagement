@@ -70,12 +70,12 @@ export default {
           { text: 'Name', value: 'name' }, { text: 'Email', value: 'email' }, { text: 'Phone Number', value: 'phoneNumber' }, { text: 'Role', value: 'role' }, { text: 'Password', value: 'password' }, { text: 'Image', value: 'image' }, { text: 'Actions', value: 'actions'}
         ],
         list: [],
-        actionsList:[{
+        actionsList: [{
           click: (item) => this.editEmpDetails(item),
-          icon:'mdi-pencil'
+          icon: 'mdi-pencil'
         },{
           click: (item) => this.delEmpDetails(item),
-          icon:'mdi-delete'
+          icon: 'mdi-delete'
         }]
       }
     }
@@ -103,6 +103,7 @@ export default {
     },
     editEmpDetails (empDetails) {
       this.empFormDetails = Object.assign({}, empDetails)
+      this.empFormDetails.file = [{}]
       this.saveBtn = false
       this.updateBtn = true
     },

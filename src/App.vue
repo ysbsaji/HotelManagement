@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <v-navigation-drawer app v-model="drawer" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
-      <img src="https://i.pinimg.com/originals/9c/37/a1/9c37a1385c59def72e2e3b470c49b475.png" alt="" width="100%" height="20%">
+      <img class="mx-3 my-3" src="https://cdn1.vectorstock.com/i/1000x1000/95/55/hotel-icon-summer-vacation-vector-13839555.jpg" alt="" width="90%" height="20%">
       <v-list
+        color="mt-6"
         dense
         nav
       >
@@ -19,7 +20,7 @@
           </v-list-item-content>
           </v-list-item>
       </v-list>
-       <v-list-group :value="false"  prepend-icon="mdi-cog-outline">
+       <v-list-group prepend-icon="mdi-cog-outline" v-if="userDetails.role == 'Manager'">
           <template v-slot:activator>
             <v-list-item-title>Settings</v-list-item-title>
           </template>
@@ -32,6 +33,7 @@
 
     <v-app-bar elevation="0" app color="#e74c3c" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      {{ userDetails.name }}  {{ userDetails.role }}
       <v-spacer></v-spacer>
       <v-tooltip bottom>
       <template v-slot:activator="{ on }">
@@ -89,7 +91,9 @@
 export default {
   data () {
     return {
-      drawer: false,
+      userDetails: null,
+      authentication: false,
+      drawer: true,
       navigationListItems: [
         { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomstaffassign' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
       ],
@@ -105,19 +109,26 @@ export default {
     }
   },
   methods: {
-    delRecordsFromApi(){
+    delRecordsFromApi () {
       this.deleteDetailsFromApi(this.$store.state.delDetails.url)
       this.$store.commit('hideDelDialog', false)
       if(this.$store.state.delDetails.title){
         this.$root.$emit('statusChange', false)
       }
     },
-    logout(){
+    logout () {
       this.$router.push('signuppage')
+      localStorage.setItem('authentication', false)
+    },
+    getAuthUserDetails () {
+      let details = localStorage.getItem('userDetails')
+      this.userDetails = JSON.parse(details)
+      this.authentication = localStorage.getItem('authentication')
+      !JSON.parse(this.authentication) ? this.$router.push('signuppage') : false
     }
   },
   mounted () {
-    //
+    this.getAuthUserDetails()
   }
 }
 </script>
