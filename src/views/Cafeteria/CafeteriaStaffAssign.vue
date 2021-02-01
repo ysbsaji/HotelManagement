@@ -4,7 +4,7 @@
       color="red"
       style="border-radius: 3px"
       class="my-3 ma-2"
-    ><h3>Cafeteria Staff Assign</h3></v-banner>
+    ><h3>Cafeteria Allocation Management</h3></v-banner>
     <v-form ref="cafeAllocationForm" class="my-6 pa-4">
       <v-row>
         <v-col cols="3">

@@ -63,6 +63,19 @@
               <v-text-field outlined dense label="Name" v-model="customerDetails.name" :rules="requiredValidation"/>
               <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email" :rules="emailValidation"/>
               <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber" :rules="requiredValidation"/>
+              <v-text-field outlined dense type="password" label="Password" v-model="customerDetails.password" :rules="passwordValidation"/>
+              <v-menu v-model="datePicker" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field outlined dense v-model="customerDetails.checkInDate" label="Checkin Date" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
+                </template>
+                <v-date-picker :min="customerDetails.checkInDate" v-model="customerDetails.checkInDate" @input="datePicker = false"></v-date-picker>
+              </v-menu>
+              <v-menu v-model="datePicker1" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field outlined dense v-model="customerDetails.checkOutDate" label="Checkout Date" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
+                </template>
+                <v-date-picker v-model="customerDetails.checkOutDate" @input="datePicker1 = false"></v-date-picker>
+              </v-menu>
             </v-form>
           </v-card-text>
           <v-divider></v-divider>
@@ -94,10 +107,15 @@ import NavigationBar from "../../components/NavigationBar";
 export default {
   data () {
     return {
-      customerDetails: {},
+      customerDetails: {
+        checkInDate: new Date().toISOString().substr(0, 10),
+        checkOutDate: new Date().toISOString().substr(0, 10),
+      },
       bookingRoomDetails: '',
       roomBokingDialog: false,
       roomDetails: [],
+      datePicker: false,
+      datePicker1: false
     }
   },
   components: { NavigationBar },
@@ -109,17 +127,33 @@ export default {
     async confirmYourBooking () {
       if (this.$refs.cafeForm.validate()) {
         this.roomBokingDialog = false
-        this.bookingRoomDetails.bookingStatus = true
+        if (this.customerDetails.checkInDate === new Date().toISOString().substr(0, 10)) {
+          this.bookingRoomDetails.bookingStatus = true
+        }else{ this.bookingRoomDetails.bookingStatus = false }
         this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
         let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedroomsDetails.json',bookedRoomDetails)
         this.$refs.cafeForm.reset()
       }
     },
     async getDetails () {
-      let details =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
-      if (details) this.roomDetails = this.getArrayObjFromObjList(details)
+      let roomDetails =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
+      if (roomDetails) this.roomDetails = this.getArrayObjFromObjList(roomDetails)
+      let bookedRooms =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
+      if (bookedRooms) var details = this.getArrayObjFromObjList(bookedRooms)
+      details.forEach(val => {
+        let todayDate = new Date().toISOString().substr(0, 10)
+        let check = Date.parse(todayDate)
+        let from = Date.parse(val.checkInDate)
+        let to = Date.parse(val.checkOutDate)
+        if((check <= to && check >= from)){
+          this.roomDetails.forEach(value => {
+            value.roomId === val.roomId ? value.bookingStatus = true : false
+          })
+        }
+      })
     },
   },
   mounted () {
