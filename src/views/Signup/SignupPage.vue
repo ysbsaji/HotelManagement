@@ -13,7 +13,7 @@
                 <h4>Login</h4>
               </v-card-title>
               <v-form ref="signinForm">
-              <v-text-field prepend-icon="mdi-person" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
+              <v-text-field prepend-icon="mdi-account" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
               <v-text-field prepend-icon="mdi-lock" label="Password" type="password" v-model="signInFormData.password" :rules="passwordValidation"></v-text-field>
               <v-card-actions>
                 <v-btn primary large block @click="signIn">Login</v-btn>
@@ -58,8 +58,9 @@ export default {
           localStorage.setItem('userDetails', JSON.stringify(val))
           localStorage.setItem('authentication', true)
           this.$router.push('roomstaffassign')
+          this.$root.$emit('getUserDetails')
           this.$refs.signinForm.reset()
-        }else { this.snackbarForSignin = true }
+        } else { this.snackbarForSignin = true }
       })
     }
   },

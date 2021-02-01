@@ -81,9 +81,6 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <v-footer v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)" app>
-      <!-- -->
-    </v-footer>
   </v-app>
 </template>
 
@@ -92,7 +89,6 @@ export default {
   data () {
     return {
       userDetails: null,
-      authentication: false,
       drawer: true,
       navigationListItems: [
         { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomstaffassign' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
@@ -123,13 +119,17 @@ export default {
     getAuthUserDetails () {
       let details = localStorage.getItem('userDetails')
       this.userDetails = JSON.parse(details)
-      this.authentication = localStorage.getItem('authentication')
-      !JSON.parse(this.authentication) ? this.$router.push('signuppage') : false
+      if (this.$route.name !== 'HomePage') !JSON.parse(localStorage.getItem('authentication')) ? this.$router.push('/') : false
     }
   },
   mounted () {
     this.getAuthUserDetails()
-    console.clear()
+    this.$root.$on('getUserDetails', () => {
+      this.getAuthUserDetails()
+    })
+  },
+  beforeDestroy () {
+    this.$root.$off('getUserDetails')
   }
 }
 </script>
