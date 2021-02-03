@@ -95,7 +95,6 @@ export default {
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json')
       if (allocationDetails) {
-        console.log(this.$store.state.userDetails);
         for(let i in allocationDetails){
           allocationDetails[i].forEach(val =>{
             val.orderId = i 

@@ -53,18 +53,6 @@ export default {
       })
       return result
     },
-  //   async getImageUrl(file){
-  //     let result = null
-  //     if(file){
-  //       var reader = new FileReader();
-  //       reader.addEventListener('load', (e) => {
-  //         result = e.target.result
-  //       })
-  //       await reader.readAsDataURL(file)
-  //     }
-  //     console.log(reader.readyState)
-  //     return result
-  //   }
   },
   filters: {
     capitalize (value) {

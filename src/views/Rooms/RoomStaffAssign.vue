@@ -105,8 +105,6 @@ export default {
       })
     },
     delAllocateDetails (details) {
-      console.log(details)
-      console.log(this.bookedRoomDetails.list)
       details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
       details.title = 'roomStaff'
       this.$store.commit('showDelDialog', details)
