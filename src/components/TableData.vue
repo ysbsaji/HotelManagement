@@ -5,7 +5,7 @@
       :items="data.list"
       class="elevation-1"
     >
-    <template v-slot:[`item.actions`]="{ item }">
+    <template v-slot:[`item.actions`]="{ item }" v-if="$store.state.userDetails.role === 'Manager'">
       <v-btn icon v-for="(action, index) in data.actionsList" text
         @click="action.click(item)" :key="index">
         <v-icon>{{ action.icon }}</v-icon>

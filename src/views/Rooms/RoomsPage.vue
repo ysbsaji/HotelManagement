@@ -132,6 +132,7 @@ export default {
         }else{ this.bookingRoomDetails.bookingStatus = false }
         this.bookingRoomDetails.roomId = this.bookingRoomDetails.id
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.roomId  + '.json', this.bookingRoomDetails)
+        this.customerDetails.role = 'Customer'
         let bookedRoomDetails = { ...this.bookingRoomDetails, ...this.customerDetails}
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedrooms.json',bookedRoomDetails)
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/bookedroomsDetails.json',bookedRoomDetails)
@@ -143,7 +144,7 @@ export default {
       if (roomDetails) this.roomDetails = this.getArrayObjFromObjList(roomDetails)
       let bookedRooms =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
       if (bookedRooms) var details = this.getArrayObjFromObjList(bookedRooms)
-      details.forEach(val => {
+      if (details) details.forEach(val => {
         let todayDate = new Date().toISOString().substr(0, 10)
         let check = Date.parse(todayDate)
         let from = Date.parse(val.checkInDate)

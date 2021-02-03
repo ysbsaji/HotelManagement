@@ -5,7 +5,7 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Cafeteria Allocation Management</h3></v-banner>
-    <v-form ref="cafeAllocationForm" class="my-6 pa-4">
+    <v-form ref="cafeAllocationForm" class="my-6 pa-4" v-if="$store.state.userDetails.role === 'Manager'">
       <v-row>
         <v-col cols="3">
           <v-select :items="orderedFoodList" item-text="tableNumber" v-model="cafeAllocationDetails.id" :disabled="selectCustomer" :rules="requiredValidation" item-value="id" outlined dense label="Customer"></v-select>
@@ -23,7 +23,32 @@
         </v-col>
       </v-row>
     </v-form>
+    <h3 class="ml-3">Staff Assigned Tables</h3>
     <table-data :data="foodDetails" class="my-3 pa-3"/>
+    <v-row class="pa-3">
+      <v-col>
+        <v-card height="100%">
+          <v-card-title>
+            Booked Tables
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text v-for="(item, index) in bookedTableDetails" :key="index">
+            <b>{{ item.tableNumber }}</b>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card height="100%">
+          <v-card-title>
+            Non Booked Tables
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text v-for="(item, index) in NonBookedTableDetails" :key="index">
+            <b>{{ item.tableNumber }}</b>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -37,6 +62,8 @@ export default {
       updateBtn: false,
       status: ['Ordered', 'Got Ready', 'Deliverd'],
       updateDetail: {},
+      bookedTableDetails: [],
+      NonBookedTableDetails: [],
       selectCustomer: false,
       cafeAllocationDetails: {},
       orderedFoodList : [],
@@ -53,7 +80,7 @@ export default {
           click: (item) => this.delAllocateStaffForOrder(item),
           icon:'mdi-delete'
         }]
-      },
+      }
     }
   },
   mounted () {
@@ -61,17 +88,34 @@ export default {
   },
   methods: {
     async getDetails () {
+      if (this.$store.state.userDetails.role !== 'Manager') this.foodDetails.headers = [{ text: 'Table Number', value: 'tableNumber' }, { text: 'Food', value: 'foodName' }, { text: 'Quantity', value: 'quantity' }, { text: 'Price', value: 'price' }, { text: 'Employee Name', value: 'empName' }, { text: 'Food Status', value: 'status' }]
       let orderedDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json')
       if (orderedDetails) this.orderedFoodList = this.getArrayObjFromObjList(orderedDetails)
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json')
-      for(let i in allocationDetails){
-        allocationDetails[i].forEach(val =>{ 
-          val.orderId = i
-          this.foodDetails.list.push(val) 
-        })
+      if (allocationDetails) {
+        console.log(this.$store.state.userDetails);
+        for(let i in allocationDetails){
+          allocationDetails[i].forEach(val =>{
+            val.orderId = i 
+            if (this.$store.state.userDetails.role === 'Manager') {
+              this.foodDetails.list.push(val) 
+            }else {
+              this.$store.state.userDetails.name === val.empName ? this.foodDetails.list.push(val) : false
+            }
+          })
+        }
       }
+      let orderList = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/orderedListDetails.json')
+      if (orderList) this.bookedTableDetails = this.getArrayObjFromObjList(orderList)
+      let tableDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json')
+      if (tableDetails) var totalTable = this.getArrayObjFromObjList(tableDetails)
+      if (this.bookedTableDetails.length > 0) {
+        totalTable.forEach(value => {
+          if (!value.bookingStatus) this.NonBookedTableDetails.push(value)
+        })
+      }else { this.NonBookedTableDetails = totalTable }
     },
     async saveAllocateStaffForOrder () {
       if (this.$refs.cafeAllocationForm.validate()){
@@ -98,6 +142,9 @@ export default {
         }
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation.json',orderedDetails)
         await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/orderedFoodDetails/' + this.cafeAllocationDetails.id + '.json')
+        this.orderedFoodList.find((val,index) => {val.id === this.cafeAllocationDetails.id ? this.orderedFoodList.splice(index,1) : false})
+        let orderList = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/orderedListDetails.json')
+        if (orderList) this.bookedTableDetails = this.getArrayObjFromObjList(orderList)
         this.$refs.cafeAllocationForm.reset()
       }
     },
@@ -109,10 +156,11 @@ export default {
       this.employeeDetails.forEach(val => {
         val.id === this.cafeAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
       })
-      this.foodDetails.list.forEach(val => {
-        val.orderId === this.updateDetail.orderId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, val.status = this.cafeAllocationDetails.status, data.push(val)) : false
+      this.foodDetails.list.forEach((val) => {
+        val.tableId === this.updateDetail.tableId ? (val.employeeId = empDetails.id, val.empName = empDetails.name, val.status = this.cafeAllocationDetails.status, data.push(val)) : false
       })
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation/' + this.updateDetail.orderId + '.json', data)
+      if (this.updateDetail.orderId) this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeOrderAllocation/' + this.updateDetail.orderId + '.json', data)
+      this.$refs.cafeAllocationForm.reset()
     },
     editAllocateStaffForOrder (details) {
       this.saveBtn = false
@@ -129,6 +177,9 @@ export default {
       this.$root.$on('statusChange', async (data) => {
         this.foodDetails.list.forEach((val, index) => {
           val.tableId === details.tableId ? this.foodDetails.list.splice(index,1) : false
+        })
+        this.bookedTableDetails.forEach((val, index) =>{
+          if (val.tableId === details.tableId) this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/orderedListDetails/' + val.id + '.json'), this.bookedTableDetails.splice(index,1)
         })
         let details1 = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + details.tableId + '.json')
         details1.bookingStatus = data

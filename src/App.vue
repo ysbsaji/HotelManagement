@@ -119,6 +119,7 @@ export default {
     getAuthUserDetails () {
       let details = localStorage.getItem('userDetails')
       this.userDetails = JSON.parse(details)
+      this.$store.dispatch('userRoleChange', this.userDetails)
       if (this.$route.name !== 'HomePage') !JSON.parse(localStorage.getItem('authentication')) ? this.$router.push('/') : false
     }
   },

@@ -8,10 +8,10 @@
     <v-form ref="cafeForm" class="my-3 pa-3">
       <v-row>
         <v-col cols="12" sm="6" md="3">
-          <v-text-field outlined dense label="Table Number" v-model="cafeFormDetails.tableNumber" :rules="requiredValidation"/>
+          <v-text-field outlined dense label="Table Number" type="number" v-model="cafeFormDetails.tableNumber" :rules="requiredValidation"/>
         </v-col>
         <v-col cols="12" sm="6" md="3">
-          <v-text-field outlined dense label="Total chairs" v-model="cafeFormDetails.totalChairs" :rules="requiredValidation"/>
+          <v-text-field outlined dense label="Total chairs" type="number" v-model="cafeFormDetails.totalChairs" :rules="requiredValidation"/>
         </v-col>
         <v-col cols="12" sm="6" md="3">
           <v-file-input outlined show-size counter multiple dense label="SelectImage" v-model="cafeFormDetails.file" @change="cafeFormDetails.file ? getImageUrl(cafeFormDetails.file[0]) : false" :rules="requiredValidation"/>

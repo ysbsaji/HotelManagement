@@ -6,18 +6,25 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     showDelDialog: false,
-    delDetails : {}
+    delDetails : {},
+    userDetails: null,
   },
   mutations: {
-    showDelDialog (state, data){
+    showDelDialog (state, data) {
       state.delDetails = data
       state.showDelDialog = true 
     },
-    hideDelDialog(state, data){
+    hideDelDialog (state, data) {
       state.showDelDialog = data
+    },
+    userDetails (state, data) {
+      state.userDetails = data
     }
   },
   actions: {
+    userRoleChange (payload,data) {
+      payload.commit('userDetails', data)
+    }
   },
   modules: {
   }

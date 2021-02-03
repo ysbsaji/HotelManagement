@@ -5,7 +5,7 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Rooms Allocation Management</h3></v-banner>
-      <v-form ref="roomAllocationForm" class="my-6 pa-4">
+      <v-form ref="roomAllocationForm" class="my-6 pa-4" v-if="$store.state.userDetails.role === 'Manager'">
         <v-row>
           <v-col cols="4">
             <v-select :items="customerDetails" item-text="name" v-model="roomAllocationDetails.customerId" :disabled="selectCustomer" item-value="id" :rules="requiredValidation" outlined dense label="Customer"></v-select>
@@ -13,9 +13,6 @@
           <v-col cols="4">
             <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="roomAllocationDetails.employeeId" :rules="requiredValidation" outlined dense label="Employee"></v-select>
           </v-col>
-          <!-- <v-col cols="4">
-            <v-select :items="status" v-model="roomAllocationDetails.status" :rules="requiredValidation" outlined dense label="Status"></v-select>
-          </v-col> -->
           <v-col cols="4">
             <v-btn text @click="selectCustomer = false; saveBtn = true; updateBtn = false; $refs.roomAllocationForm.reset()">Cancel</v-btn>
             <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveAllocateStaffToRoom">Save</v-btn>
@@ -40,7 +37,6 @@ export default {
     return {
       saveBtn: true,
       updateBtn: false,
-      // status: ['CheckIn', 'CheckOut'],
       selectCustomer: false,
       roomAllocationDetails: {},
       customerDetails: [],
@@ -90,7 +86,6 @@ export default {
         delete cusDetails.id
         cusDetails.empName = empDetails.name
         cusDetails.employeeId = empDetails.id
-        cusDetails.status = this.roomAllocationDetails.status
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation.json',cusDetails)
         let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
         this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
@@ -110,12 +105,17 @@ export default {
       })
     },
     delAllocateDetails (details) {
+      console.log(details)
+      console.log(this.bookedRoomDetails.list)
       details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
       details.title = 'roomStaff'
       this.$store.commit('showDelDialog', details)
       this.$root.$on('statusChange', async (data) => {
         this.RoomsDetails.list.forEach((val, index) => {
           val.id === details.id ? this.RoomsDetails.list.splice(index, 1) : false
+        })
+        this.bookedRoomDetails.list.forEach((val, index) => {
+          if (val.roomId === details.roomId)  this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/bookedroomsDetails/' + val.id + '.json'), this.bookedRoomDetails.list.splice(index,1)
         })
         let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json')
         rooms.bookingStatus = data
@@ -125,17 +125,18 @@ export default {
     updateAllocateStaffToRoom () {
       this.saveBtn = true
       this.updateBtn = false
+      this.selectCustomer = false
       let empDetails = {}
       this.employeeDetails.forEach(val => {
         val.id === this.roomAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
       })
       this.updateDetail.empName = empDetails.name
       this.updateDetail.employeeId = empDetails.id
-      this.updateDetail.status = this.roomAllocationDetails.status
       this.updateDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation/' + this.updateDetail.id + '.json', this.updateDetail)
       this.$refs.roomAllocationForm.reset()
     },
     async getDetailOfBookingRooms () {
+      if (this.$store.state.userDetails.role !== 'Manager') this.RoomsDetails.headers = [{ text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Rate', value: 'rate' }, { text: 'Check IN', value: 'checkInDate' }, { text: 'Check Out', value: 'checkOutDate' }, { text: 'Employee Name', value: 'empName' }]
       let cusDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
       if (cusDetails) {
         for(let i in cusDetails){
@@ -146,23 +147,23 @@ export default {
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
       let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
-      if (allocationDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
+      if (this.$store.state.userDetails.role === 'Manager') {
+        if (allocationDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
+      }else {
+        for (let i in allocationDetails) { if (allocationDetails[i].empName === this.$store.state.userDetails.name) this.RoomsDetails.list.push(allocationDetails[i]) }
+      }
       let BookedroomDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedroomsDetails.json')
-      this.bookedRoomDetails.list = this.getArrayObjFromObjList(BookedroomDetails)
+      if (BookedroomDetails) this.bookedRoomDetails.list = this.getArrayObjFromObjList(BookedroomDetails)
       let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
       let RoomDetails = this.getArrayObjFromObjList(rooms)
-      if (this.bookedRoomDetails.list) this.bookedRoomDetails.list.forEach(val => {
-        RoomDetails.forEach(value => {
-          if (val.roomId !== value.roomId) this.nonBookedRoomDetails.list.push(value)
+      this.nonBookedRoomDetails.list = []
+      if (this.bookedRoomDetails.list.length > 0) {
+        this.bookedRoomDetails.list.forEach(val => {
+          RoomDetails.forEach(value => {
+            if (val.roomId !== value.roomId) this.nonBookedRoomDetails.list.push(value)
+          })
         })
-      })
-      console.log(this.nonBookedRoomDetails.list);
-    },
-    cancelForm () {
-      this.$refs.roomAllocationForm.reset()
-      this.saveBtn = true
-      this.updateBtn = false
-      this.selectCustomer = false
+      }else { this.nonBookedRoomDetails.list = RoomDetails }
     }
   },
   beforeDestroy () {
