@@ -18,8 +18,8 @@
         </v-col>
         <v-col cols="12" sm="6" md="3">
           <v-btn text class="mx-3" @click="$refs.cafeForm.reset(); saveBtn = true; updateBtn = false ">Cancel</v-btn>
-          <v-btn color="#EF5350" v-show="saveBtn" @click="saveCafeDetails">Save</v-btn>
-          <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateCafeDetails" >Update</v-btn>
+          <v-btn color="#EF5350" v-show="saveBtn" @click="saveCafeDetails" :loading="btnLoading">Save</v-btn>
+          <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateCafeDetails" :loading="btnLoading">Update</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -39,8 +39,8 @@
         </v-col>
         <v-col cols="12" sm="6" md="3">
           <v-btn text class="mx-3" @click="$refs.foodForm.reset(); saveBtn1 = true; updateBtn1 = false ">Cancel</v-btn>
-          <v-btn color="#EF5350" v-show="saveBtn1" @click="saveFoodDetails">Save</v-btn>
-          <v-btn class="mx-3" color="#EF5350" v-show="updateBtn1" @click="updateFoodDetails" >Update</v-btn>
+          <v-btn color="#EF5350" v-show="saveBtn1" @click="saveFoodDetails" :loading="btnLoading">Save</v-btn>
+          <v-btn class="mx-3" color="#EF5350" v-show="updateBtn1" @click="updateFoodDetails" :loading="btnLoading">Update</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -91,8 +91,9 @@ export default {
   methods: {
     async saveCafeDetails () {
       if (this.$refs.cafeForm.validate()) {
+        this.btnLoading = true
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json',this.cafeFormDetails)
-        this.getTableDetails()
+        await this.getTableDetails()
         this.$refs.cafeForm.reset()
       }
     },
@@ -113,8 +114,9 @@ export default {
     },
     async updateCafeDetails () {
       if (this.$refs.cafeForm.validate()) {
+        this.btnLoading = true
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.cafeFormDetails.id + '.json', this.cafeFormDetails)
-        this.getTableDetails()
+        await this.getTableDetails()
         this.saveBtn = true
         this.updateBtn = false
         this.$refs.cafeForm.reset()
@@ -130,13 +132,15 @@ export default {
       if (cafeDetails) this.cafeTableDetails.list = this.getArrayObjFromObjList(cafeDetails)
       let foodDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/foodDetails.json')
       if (foodDetails) this.foodTableDetails.list = this.getArrayObjFromObjList(foodDetails)
+      this.btnLoading = false
     },
-    saveFoodDetails () {
+    async saveFoodDetails () {
       if (this.$refs.foodForm.validate()) {
+        this.btnLoading = true
         this.foodDetails.quantity = 0
         this.foodDetails.price = 0
-        this.postDetailsToApi('https://traineesapi.firebaseio.com/foodDetails.json',this.foodDetails)
-        this.getTableDetails()
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/foodDetails.json',this.foodDetails)
+        await this.getTableDetails()
         this.$refs.foodForm.reset()
       }
     },
@@ -145,9 +149,10 @@ export default {
       this.saveBtn1 = false
       this.updateBtn1 = true
     },
-    updateFoodDetails () {
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
-      this.getTableDetails()
+    async updateFoodDetails () {
+      this.btnLoading = true
+      await this.updateDetailsToApi('https://traineesapi.firebaseio.com/foodDetails/' + this.foodDetails.id + '.json', this.foodDetails)
+      await this.getTableDetails()
       this.saveBtn1 = true
       this.updateBtn1 = false
       this.$refs.foodForm.reset()

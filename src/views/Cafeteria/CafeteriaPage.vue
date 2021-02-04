@@ -134,12 +134,13 @@ export default {
       })
       let details = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId + '.json')
       details.bookingStatus = true
+      details.fooddetails = orderedList
       if (details.bookingStatus) {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId  + '.json', details)
-        this.getDetails()
-        let foodDetails = { ...orderedList, ...this.orderedTableDetails}
-        await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json',foodDetails)
-        await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedListDetails.json',foodDetails)
+        await this.getDetails()
+        // let foodDetails = { ...orderedList, ...this.orderedTableDetails}
+        // await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json',foodDetails)
+        // await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedListDetails.json',foodDetails)
       }
     }
   },

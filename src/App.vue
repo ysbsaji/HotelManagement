@@ -107,10 +107,10 @@ export default {
   methods: {
     async delRecordsFromApi () {
       this.$store.commit('hideDelDialog', false)
-      if(this.$store.state.delDetails.title){
-        this.$root.$emit('statusChange', false)
-      }
-      await this.deleteDetailsFromApi(this.$store.state.delDetails.url)
+      // if(this.$store.state.delDetails.title){
+      //   this.$root.$emit('statusChange', false)
+      // }
+      // await this.deleteDetailsFromApi(this.$store.state.delDetails.url)
     },
     logout () {
       this.$router.push('signuppage')

@@ -40,10 +40,10 @@
             <v-btn text @click="$refs.empForm.reset(); saveBtn = true; updateBtn = false ">
               Cancel
             </v-btn>
-            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveEmpFromDetails">
+            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" :loading="btnLoading" @click="saveEmpFromDetails">
               Save
             </v-btn>
-             <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateEmpFromDetails" >
+             <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" :loading="btnLoading" @click="updateEmpFromDetails" >
               Update
             </v-btn>
           </v-col>
@@ -83,14 +83,16 @@ export default {
   methods: {
     async saveEmpFromDetails () {
       if (this.$refs.empForm.validate()) {
+        this.btnLoading = true
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails.json',this.empFormDetails)
-        this.getTableDetails()
+        await this.getTableDetails()
         this.$refs.empForm.reset()
       }
     },
     async getTableDetails () {
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if(empDetails) this.employeeDetails.list = this.getArrayObjFromObjList(empDetails)
+      this.btnLoading = false
     },
     getImageUrl (file) {
       if (file) {
@@ -109,8 +111,9 @@ export default {
     },
     async updateEmpFromDetails () {
       if (this.$refs.empForm.validate()) {
+        this.btnLoading = true
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/employeeDetails/' + this.empFormDetails.id + '.json', this.empFormDetails)
-        this.getTableDetails()
+        await this.getTableDetails()
         this.saveBtn = true
         this.updateBtn = false
         this.$refs.empForm.reset()

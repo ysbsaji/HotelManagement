@@ -39,10 +39,10 @@
             <v-btn text @click="$refs.roomsForm.reset(); saveBtn = true; updateBtn = false ">
               Cancel
             </v-btn>
-            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveRoomDetails">
+            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" :loading="btnLoading" @click="saveRoomDetails">
               Save
             </v-btn>
-            <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateRoomDetails">
+            <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" :loading="btnLoading" @click="updateRoomDetails">
               Update
             </v-btn>
           </v-col>
@@ -79,16 +79,22 @@ export default {
     }
   },
   methods: {
-    saveRoomDetails () {
+    async saveRoomDetails () {
       if(this.$refs.roomsForm.validate()) {
-        this.postDetailsToApi('https://traineesapi.firebaseio.com/rooms.json',this.roomsFormDetails)
-        this.getTableDetails()
+        this.btnLoading =  true
+        this.roomsFormDetails.status = 'Free'
+        // this.roomsFormDetails.bookingDetails = []
+        this.roomsFormDetails.isAssigned = ''
+        console.log(this.roomsFormDetails);
+        await this.postDetailsToApi('https://traineesapi.firebaseio.com/rooms.json',this.roomsFormDetails)
+        await this.getTableDetails()
         this.$refs.roomsForm.reset()
       }
     },
     async getTableDetails () {
       let roomDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
       if (roomDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(roomDetails)
+      this.btnLoading = false
     },
     editRoomDetails (roomdetails) {
       this.roomsFormDetails = Object.assign({}, roomdetails)
@@ -96,10 +102,11 @@ export default {
       this.saveBtn = false
       this.updateBtn = true
     },
-    updateRoomDetails () {
+    async updateRoomDetails () {
       if(this.$refs.roomsForm.validate()) {
-        this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.roomsFormDetails.id + '.json', this.roomsFormDetails)
-        this.getTableDetails()
+        this.btnLoading = true
+        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.roomsFormDetails.id + '.json', this.roomsFormDetails)
+        await this.getTableDetails()
         this.saveBtn = true
         this.updateBtn = false
         this.$refs.roomsForm.reset()

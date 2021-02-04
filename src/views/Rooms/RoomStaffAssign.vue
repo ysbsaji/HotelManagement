@@ -5,27 +5,43 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Rooms Allocation Management</h3></v-banner>
-      <v-form ref="roomAllocationForm" class="my-6 pa-4" v-if="$store.state.userDetails.role === 'Manager'">
-        <v-row>
-          <v-col cols="4">
-            <v-select :items="customerDetails" item-text="name" v-model="roomAllocationDetails.customerId" :disabled="selectCustomer" item-value="id" :rules="requiredValidation" outlined dense label="Customer"></v-select>
-          </v-col>
-          <v-col cols="4">
-            <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="roomAllocationDetails.employeeId" :rules="requiredValidation" outlined dense label="Employee"></v-select>
-          </v-col>
-          <v-col cols="4">
-            <v-btn text @click="selectCustomer = false; saveBtn = true; updateBtn = false; $refs.roomAllocationForm.reset()">Cancel</v-btn>
-            <v-btn class="mx-3" color="#EF5350" v-show="saveBtn" @click="saveAllocateStaffToRoom">Save</v-btn>
-            <v-btn class="mx-3" color="#EF5350" v-show="updateBtn" @click="updateAllocateStaffToRoom">Update</v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
-    <h3 class="ml-3">Staff Assigned Rooms</h3>
     <table-data :data="RoomsDetails" class="my-3 pa-3"/>
-    <h3 class="ml-3">Booked Rooms</h3>
-    <table-data :data="bookedRoomDetails" class="my-3 pa-3"/>
-    <h3 class="ml-3">Non Booked Rooms</h3>
-    <table-data :data="nonBookedRoomDetails" class="my-3 pa-3"/>
+    <v-dialog
+      v-model="isAssignDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          Assign Employee To Customer
+        </v-card-title>
+        <v-card-text class="mt-3">
+          <v-select :items="employeeDetails" item-text="name" item-value="id" v-model="assignEmployee.employeeId" :rules="requiredValidation" outlined dense label="Employee"></v-select>
+        </v-card-text>
+        <v-divider></v-divider>
+          <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="confirmAssign()">Assign</v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="statusDialog"
+      width="100%"
+    >
+      <v-card>
+        <v-card-title>
+          Customer Information
+        </v-card-title>
+        <v-card-text>
+          <table-data :data="BookingDetails" class="my-3 pa-3"/>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="statusDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -35,138 +51,80 @@ export default {
   components: { TableData },
   data () {
     return {
-      saveBtn: true,
-      updateBtn: false,
-      selectCustomer: false,
-      roomAllocationDetails: {},
-      customerDetails: [],
+      isAssignDialog: false,
+      statusDialog: false,
+      assignEmployee: {},
+      updateDetails: {},
       employeeDetails: [],
-      updateDetail: {},
       RoomsDetails: {
         headers: [
-          { text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Rate', value: 'rate' }, { text: 'Check IN', value: 'checkInDate' }, { text: 'Check Out', value: 'checkOutDate' }, { text: 'Employee Name', value: 'empName' }, { text: 'Actions', value: 'actions'}
+          { text: 'Room Number', value: 'roomNumber' }, { text: 'Room Type', value: 'roomType' }, { text: 'Number of Bed', value: 'numberOfBed' }, { text: 'Max person', value: 'maxPerson' }, { text: 'Rate', value: 'rate' }, { text: 'Status', value: 'status' }, { text: 'Is Assigned', value: 'isAssigned' }
         ],
         list: [],
-        actionsList:[{
-          click: (item) => this.editAllocateDetails(item),
-          icon:'mdi-pencil'
-        },{
-          click: (item) => this.delAllocateDetails(item),
-          icon:'mdi-delete'
+        bookedList:[{
+          click: (item) => this.bookedDetails(item),
+          icon:'mdi-clipboard-account-outline'
+        }],
+        isAssignedList:[{
+          click: (item) => this.assignEmpToCus(item),
+          icon:'mdi-clipboard-account-outline'
         }]
       },
-      bookedRoomDetails: {
-        headers: [
-          { text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Emial', value: 'email' }, { text: 'Password', value: 'password' }, { text: 'Rate', value: 'rate' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Check IN', value: 'checkInDate' }, { text: 'Check Out', value: 'checkOutDate' }
-        ],
-        list: []
+      BookingDetails: {
+      headers: [
+        { text: 'Customer Name', value: 'name' }, { text: 'Contact NUmber', value: 'contactNumber' }, { text: 'Check IN Date', value: 'checkInDate' }, { text: 'CheckOut Date', value: 'checkOutDate' }
+      ],
+      list: []
       },
-      nonBookedRoomDetails: {
-        headers: [
-          { text: 'Room Number', value: 'roomNumber' }, { text: 'Number of Bed', value: 'numberOfBed' }, { text: 'Room Type', value: 'roomType' }, { text: 'Rate', value: 'rate' }, { text: 'Max Person', value: 'maxPerson' }, { text: 'Image', value: 'image' }
-        ],
-        list: []
-      }
     }
   },
   mounted () {
     this.getDetailOfBookingRooms()
   },
   methods: {
-    async saveAllocateStaffToRoom () {
-      if (this.$refs.roomAllocationForm.validate()) {
-        let cusDetails = {}
-        let empDetails = {}
-        this.customerDetails.forEach(val => {
-          val.id === this.roomAllocationDetails.customerId ?  cusDetails = Object.assign({}, val): false
-        })
-        this.employeeDetails.forEach(val => {
-          val.id === this.roomAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
-        })
-        delete cusDetails.id
-        cusDetails.empName = empDetails.name
-        cusDetails.employeeId = empDetails.id
-        await this.postDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation.json',cusDetails)
-        let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
-        this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
-        await this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms/' + this.roomAllocationDetails.customerId + '.json')
-        await this.getDetailOfBookingRooms()
-        this.$refs.roomAllocationForm.reset()
-      }
+    assignEmpToCus (details) {
+      this.updateDetails = details
+      this.isAssignDialog = true
     },
-    editAllocateDetails (details) {
-      this.saveBtn = false
-      this.updateBtn = true
-      this.updateDetail = details
-      this.roomAllocationDetails =  details
-      this.selectCustomer = true
-      this.employeeDetails.forEach(val => {
-        val.id === details.employeeId ?( this.roomAllocationDetails.employeeId = val.id ): false
-      })
-    },
-    delAllocateDetails (details) {
-      details.url = 'https://traineesapi.firebaseio.com/roomAllocation/' + details.id + '.json'
-      details.title = 'roomStaff'
-      this.$store.commit('showDelDialog', details)
-      this.$root.$on('statusChange', async (data) => {
-        this.RoomsDetails.list.forEach((val, index) => {
-          val.id === details.id ? this.RoomsDetails.list.splice(index, 1) : false
-        })
-        this.bookedRoomDetails.list.forEach((val, index) => {
-          if (val.roomId === details.roomId)  this.deleteDetailsFromApi('https://traineesapi.firebaseio.com/bookedroomsDetails/' + val.id + '.json'), this.bookedRoomDetails.list.splice(index,1)
-        })
-        let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json')
-        rooms.bookingStatus = data
-        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + details.roomId + '.json', rooms)
-      })
-    },
-    updateAllocateStaffToRoom () {
-      this.saveBtn = true
-      this.updateBtn = false
-      this.selectCustomer = false
-      let empDetails = {}
-      this.employeeDetails.forEach(val => {
-        val.id === this.roomAllocationDetails.employeeId ? empDetails = Object.assign({}, val) : false
-      })
-      this.updateDetail.empName = empDetails.name
-      this.updateDetail.employeeId = empDetails.id
-      this.updateDetailsToApi('https://traineesapi.firebaseio.com/roomAllocation/' + this.updateDetail.id + '.json', this.updateDetail)
-      this.$refs.roomAllocationForm.reset()
+    async confirmAssign () {
+      this.isAssignDialog = false
+      this.employeeDetails.find(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetails.isAssigned = val.name })
+      await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.updateDetails.id + '.json', this.updateDetails)
     },
     async getDetailOfBookingRooms () {
-      if (this.$store.state.userDetails.role !== 'Manager') this.RoomsDetails.headers = [{ text: 'Customer Name', value: 'name' }, { text: 'Contact Number', value: 'contactNumber' }, { text: 'Room Number', value: 'roomNumber' }, { text: 'Rate', value: 'rate' }, { text: 'Check IN', value: 'checkInDate' }, { text: 'Check Out', value: 'checkOutDate' }, { text: 'Employee Name', value: 'empName' }]
-      let cusDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedrooms.json')
-      if (cusDetails) {
-        for(let i in cusDetails){
-          delete cusDetails[i].id
-        }
-        this.customerDetails = this.getArrayObjFromObjList(cusDetails)
-      }
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
-      let allocationDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/roomAllocation.json')
-      if (this.$store.state.userDetails.role === 'Manager') {
-        if (allocationDetails) this.RoomsDetails.list = this.getArrayObjFromObjList(allocationDetails)
-      }else {
-        for (let i in allocationDetails) { if (allocationDetails[i].empName === this.$store.state.userDetails.name) this.RoomsDetails.list.push(allocationDetails[i]) }
-      }
-      let BookedroomDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/bookedroomsDetails.json')
-      if (BookedroomDetails) this.bookedRoomDetails.list = this.getArrayObjFromObjList(BookedroomDetails)
       let rooms = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
-      let RoomDetails = this.getArrayObjFromObjList(rooms)
-      this.nonBookedRoomDetails.list = []
-      if (this.bookedRoomDetails.list.length > 0) {
-        this.bookedRoomDetails.list.forEach(val => {
-          RoomDetails.forEach(value => {
-            if (val.roomId !== value.roomId) this.nonBookedRoomDetails.list.push(value)
-          })
+      if (rooms) this.RoomsDetails.list = await  this.getArrayObjFromObjList(rooms)
+      if (this.$store.state.userDetails.role === 'Manager') {
+        this.RoomsDetails.list.forEach(value => {
+        if (value.bookingDetails) value.bookingDetails.forEach(val => {
+          let today = Date.parse(new Date().toISOString().substr(0, 10))
+          let check = Date.parse(val.checkOutDate)
+          if (check >= today) var forStatus = true
+          if (!forStatus) value.status = 'Free'
         })
-      }else { this.nonBookedRoomDetails.list = RoomDetails }
+      })
+      }else {
+        let filter = this.RoomsDetails.list
+        this.RoomsDetails.list = []
+        filter.forEach((value) => {
+          if (value.isAssigned === this.$store.state.userDetails.name) {
+            this.RoomsDetails.list.push(value)
+          }
+        })
+      }
+    },
+    bookedDetails(details){
+      this.statusDialog = true
+      this.BookingDetails.list = []
+      details.bookingDetails.forEach(val => {
+        let today = Date.parse(new Date().toISOString().substr(0, 10))
+        let check = Date.parse(val.checkOutDate)
+        if (check >= today) this.BookingDetails.list.push(val)
+      })
     }
   },
-  beforeDestroy () {
-    this.$root.$off('statusChange')
-  }
 }
 </script>
 

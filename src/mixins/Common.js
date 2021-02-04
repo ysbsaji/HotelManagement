@@ -1,4 +1,9 @@
 export default {
+  data() {
+    return {
+      btnLoading: false
+    }
+  },
   computed: {
     //
   },
