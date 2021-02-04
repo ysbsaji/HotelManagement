@@ -132,10 +132,11 @@ export default {
         this.employeeDetails.forEach(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetail.isAssigned = val.name })
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
       }else {
+        this.orderStagesDialog = false
         this.updateDetail.orderStages = this.assignEmployee.orderStages
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
-        this.orderStagesDialog = false
       }
+      await this.getDetails()
     },
     changeOrderStages (details) {
       this.updateDetail = details

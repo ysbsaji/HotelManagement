@@ -138,9 +138,6 @@ export default {
       if (details.bookingStatus) {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId  + '.json', details)
         await this.getDetails()
-        // let foodDetails = { ...orderedList, ...this.orderedTableDetails}
-        // await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedFoodDetails.json',foodDetails)
-        // await this.postDetailsToApi('https://traineesapi.firebaseio.com/orderedListDetails.json',foodDetails)
       }
     }
   },
