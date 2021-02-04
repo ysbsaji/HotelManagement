@@ -55,10 +55,6 @@ export default {
   data () {
     return {
       foodDetails: {},
-      saveBtn: true,
-      saveBtn1: true,
-      updateBtn1: false,
-      updateBtn: false,
       cafeFormDetails: {},
       cafeTableDetails: {
         headers: [

@@ -59,8 +59,6 @@ export default {
   components: { TableData },
   data () {
     return {
-      saveBtn: true,
-      updateBtn: false,
       RoomType: ['Ac', 'Non Ac'],
       RoomsDetails: {
         headers: [

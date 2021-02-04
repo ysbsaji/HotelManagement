@@ -67,6 +67,7 @@
             <v-btn
               dark
               text
+              :loading="btnLoading"
               @click="saveSelectedFood"
             >
               Save
@@ -127,7 +128,7 @@ export default {
       })
     },
     async saveSelectedFood () {
-      this.foodOrderDialog = false
+      this.btnLoading = true
       let orderedList = []
       this.foodTableDetails.list.forEach(val => {
         val.quantity > 0 ? (delete val.id, orderedList.push(val)) : false 
@@ -139,6 +140,8 @@ export default {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId  + '.json', details)
         await this.getDetails()
       }
+      this.btnLoading = false
+      this.foodOrderDialog = false
     }
   },
   mounted () {

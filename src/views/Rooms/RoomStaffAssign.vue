@@ -20,7 +20,7 @@
         <v-divider></v-divider>
           <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="confirmAssign()">Assign</v-btn>
+          <v-btn color="primary" text :loading="btnLoading" @click="confirmAssign()">Assign</v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -87,9 +87,11 @@ export default {
       this.isAssignDialog = true
     },
     async confirmAssign () {
-      this.isAssignDialog = false
+      this.btnLoading = true
       this.employeeDetails.find(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetails.isAssigned = val.name })
       await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.updateDetails.id + '.json', this.updateDetails)
+      this.btnLoading = false
+      this.isAssignDialog = false
     },
     async getDetailOfBookingRooms () {
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')

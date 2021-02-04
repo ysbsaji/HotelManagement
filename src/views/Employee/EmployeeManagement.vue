@@ -61,8 +61,6 @@ export default {
   components: { TableData },
   data () {
     return {
-      saveBtn: true,
-      updateBtn: false,
       role: [ 'Manager', 'Staff' ],
       empFormDetails: {},
       employeeDetails: {

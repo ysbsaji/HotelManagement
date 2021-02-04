@@ -1,7 +1,11 @@
 export default {
   data() {
     return {
-      btnLoading: false
+      btnLoading: false,
+      saveBtn: true,
+      saveBtn1: true,
+      updateBtn1: false,
+      updateBtn: false,
     }
   },
   computed: {

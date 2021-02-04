@@ -5,7 +5,6 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Cafeteria Allocation Management</h3></v-banner>
-    <h3 class="ml-3">Staff Assigned Tables</h3>
     <table-data :data="cafeDetails" class="my-3 pa-3"/>
     <v-dialog
      v-model="foodDetailDialog"
@@ -41,7 +40,7 @@
         <v-divider></v-divider>
           <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="confirmAssign()">Assign</v-btn>
+          <v-btn color="primary" :loading="btnLoading" text @click="confirmAssign()">Assign</v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -59,7 +58,7 @@
         <v-divider></v-divider>
           <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="confirmAssign('orderStages')">Change</v-btn>
+          <v-btn color="primary" text :loading="btnLoading" @click="confirmAssign('orderStages')">Change</v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -110,11 +109,18 @@ export default {
       this.cafeDetails.list.forEach(async (val)=> {
         if (val.bookingStatus) {
           if (val.orderStages) {
-            if (val.orderStages === 'Table Free') val.bookingStatus = false, val.orderStages = '', await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + val.id + '.json', val)
+            if (val.orderStages === 'Table Free') val.bookingStatus = false, val.orderStages = '', val.isAssigned = '', await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + val.id + '.json', val)
           }
         }
         val.bookingStatus ? val.status = 'Booked' : val.status = 'Free'
       })
+      if (this.$store.state.userDetails.role !== 'Manager') {
+        let filter = this.cafeDetails.list
+        this.cafeDetails.list = []
+        filter.find(val => {
+          if (val.isAssigned === this.$store.state.userDetails.name) this.cafeDetails.list.push(val)
+        })
+      }
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
     },
@@ -127,16 +133,18 @@ export default {
       this.isAssignDialog = true
     },
     async confirmAssign (item) {
+      this.btnLoading = true
       if (item !== 'orderStages') {
-        this.isAssignDialog = false
         this.employeeDetails.forEach(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetail.isAssigned = val.name })
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
       }else {
-        this.orderStagesDialog = false
         this.updateDetail.orderStages = this.assignEmployee.orderStages
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
       }
       await this.getDetails()
+      this.btnLoading = false
+      this.isAssignDialog = false
+      this.orderStagesDialog = false
     },
     changeOrderStages (details) {
       this.updateDetail = details
