@@ -6,7 +6,7 @@ import Axios from 'axios'
 import vuetify from './plugins/vuetify';
 import Common from './mixins/Common';
 import Validation from './mixins/validation'
- 
+
 let mixins = { Common, Validation }
 Object.keys(mixins).forEach(key => {
   Vue.mixin(mixins[key])

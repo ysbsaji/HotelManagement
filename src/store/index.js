@@ -8,6 +8,8 @@ export default new Vuex.Store({
     showDelDialog: false,
     delDetails : {},
     userDetails: null,
+    imgDialog: false,
+    image: ''
   },
   mutations: {
     showDelDialog (state, data) {
@@ -19,11 +21,21 @@ export default new Vuex.Store({
     },
     userDetails (state, data) {
       state.userDetails = data
+    },
+    imgDialog (state, data) {
+      state.imgDialog = data
+    },
+    assignImg (state, data) {
+      state.image = data.image
     }
   },
   actions: {
     userRoleChange (payload,data) {
       payload.commit('userDetails', data)
+    },
+    imgDialog (payload, data) {
+      payload.commit('imgDialog', true)
+      payload.commit('assignImg', data)
     }
   },
   modules: {

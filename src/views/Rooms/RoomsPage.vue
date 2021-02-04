@@ -13,6 +13,7 @@
           >
             <v-img
               height="250"
+              @click="getIMageUrl(item)"
               :src="item.image"
             ></v-img>
             <v-card-title>Room Details</v-card-title>
@@ -125,7 +126,7 @@ export default {
         v => !!v || 'required',
         (v) => {
           if (Date.parse(v) >= Date.parse(this.customerDetails.checkInDate)) {
-            return ''
+            return true
           }else { return 'CheckOut Date Should greater than checkin date'}
         }
       ],

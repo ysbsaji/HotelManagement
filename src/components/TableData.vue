@@ -15,7 +15,7 @@
       {{ item.rate | moneySymbol }}
     </template>
     <template v-slot:[`item.image`]="{ item }">
-      <img :src="item.image" alt="No image" width="40px">
+      <img :src="item.image" alt="No image" width="40px" @click="getIMageUrl(item)">
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <p style="color: #29B6F6" v-if="item.status === 'Booked'"> <u v-for="(list, index) in data.bookedList" :key="index" @click="list.click(item)">{{ item.status }}</u> </p>
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  props: ['data']
+  props: ['data'],
 }
 </script>
 

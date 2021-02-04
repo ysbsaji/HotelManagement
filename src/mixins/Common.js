@@ -12,6 +12,9 @@ export default {
     //
   },
   methods: {
+    getIMageUrl (item) {
+      this.$store.dispatch('imgDialog', item)
+    },
     getArrayObjFromObjList (objList) { // key-id, value-data => [{},{}]
       let keys = Object.keys(objList)
       let resultArray = []

@@ -81,6 +81,12 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <v-dialog
+      v-model="imgDialog"
+      width="800"
+    >
+      <v-img :src="$store.state.image" width="100%" contain></v-img>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -102,6 +108,14 @@ export default {
   computed: {
     deleteDialog () {
       return this.$store.state.showDelDialog
+    },
+    imgDialog: {
+      get () {
+        return this.$store.state.imgDialog
+      },
+      set (value) {
+        this.$store.commit('imgDialog', value)
+      }
     }
   },
   methods: {
@@ -119,6 +133,14 @@ export default {
       if (this.$route.name !== 'HomePage') !JSON.parse(localStorage.getItem('authentication')) ? this.$router.push('/') : false
     }
   },
+  // watch: {
+  //   imgDialog () {
+  //     let cout = 0
+  //     cout++
+  //     console.log(cout);
+  //     this.$store.state.imgDialog = false
+  //   }
+  // },
   mounted () {
     this.getAuthUserDetails()
     this.$root.$on('getUserDetails', () => {
