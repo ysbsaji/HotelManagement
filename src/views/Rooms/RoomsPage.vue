@@ -125,16 +125,14 @@ export default {
         this.roomDetails.forEach(val => {
           if (this.bookingRoomDetails.id === val.id) {
             if (val.bookingDetails) val.bookingDetails.forEach(val => {
-              let todayDate = this.customerDetails.checkInDate
-              let check = Date.parse(todayDate)
-              let todayDate1 = this.customerDetails.checkOutDate
-              let check1 = Date.parse(todayDate1)
+              let checkInDate = Date.parse(this.customerDetails.checkInDate)
+              let checkOutDate = Date.parse(this.customerDetails.checkOutDate)
               let from = Date.parse(val.checkInDate)
               let to = Date.parse(val.checkOutDate)
-              if((check <= to && check >= from)){
+              if((checkInDate <= to && checkInDate >= from)){
                 this.snackbarForRoomDia = true
               }
-              if((check1 <= to && check1 >= from)) {
+              if((checkOutDate <= to && checkOutDate >= from)) {
                 this.snackbarForRoomDia = true
               }
             })
