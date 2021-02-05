@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <v-navigation-drawer app v-model="drawer" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
-      <img class="mx-3 my-3" src="https://cdn1.vectorstock.com/i/1000x1000/95/55/hotel-icon-summer-vacation-vector-13839555.jpg" alt="" width="90%" height="20%">
+      <img class="mx-3 my-3" src="@/assets/logo-hotel.png" alt="" width="90%">
+      <v-divider></v-divider>
       <v-list
         color="mt-6"
         dense
@@ -120,6 +121,7 @@ export default {
   },
   methods: {
     async delRecordsFromApi () {
+      await this.deleteDetailsFromApi(this.$store.state.delDetails.url)
       this.$store.commit('hideDelDialog', false)
     },
     logout () {
@@ -133,14 +135,6 @@ export default {
       if (this.$route.name !== 'HomePage') !JSON.parse(localStorage.getItem('authentication')) ? this.$router.push('/') : false
     }
   },
-  // watch: {
-  //   imgDialog () {
-  //     let cout = 0
-  //     cout++
-  //     console.log(cout);
-  //     this.$store.state.imgDialog = false
-  //   }
-  // },
   mounted () {
     this.getAuthUserDetails()
     this.$root.$on('getUserDetails', () => {

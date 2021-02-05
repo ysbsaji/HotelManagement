@@ -4,7 +4,7 @@
       color="red"
       style="border-radius: 3px"
       class="my-3 ma-2"
-    ><h3>Rooms Allocation Management</h3></v-banner>
+    ><h3>Room Allocation Management</h3></v-banner>
     <table-data :data="RoomsDetails" class="my-3 pa-3"/>
     <v-dialog
       v-model="isAssignDialog"
@@ -26,6 +26,7 @@
     </v-dialog>
     <v-dialog
       v-model="statusDialog"
+      persistent
       width="100%"
     >
       <v-card>
@@ -61,6 +62,7 @@ export default {
           { text: 'Room Number', value: 'roomNumber' }, { text: 'Room Type', value: 'roomType' }, { text: 'Number of Bed', value: 'numberOfBed' }, { text: 'Max person', value: 'maxPerson' }, { text: 'Rate', value: 'rate' }, { text: 'Status', value: 'status' }, { text: 'Is Assigned', value: 'isAssigned' }
         ],
         list: [],
+        loading: true,
         bookedList:[{
           click: (item) => this.bookedDetails(item),
           icon:'mdi-clipboard-account-outline'
@@ -72,7 +74,7 @@ export default {
       },
       BookingDetails: {
       headers: [
-        { text: 'Customer Name', value: 'name' }, { text: 'Contact NUmber', value: 'contactNumber' }, { text: 'Check IN Date', value: 'checkInDate' }, { text: 'CheckOut Date', value: 'checkOutDate' }
+        { text: 'Customer Name', value: 'name' }, { text: 'Contact NUmber', value: 'contactNumber' }, { text: 'Check IN Date', value: 'checkInDate' }, { text: 'CheckOut Date', value: 'checkOutDate' }, { text: 'CheckIn Time', value: 'checkInTime' }, { text: 'CheckOut Time', value: 'checkOutTime' }
       ],
       list: []
       },
@@ -103,8 +105,9 @@ export default {
         if (value.bookingDetails) value.bookingDetails.forEach(val => {
           let today = Date.parse(new Date().toISOString().substr(0, 10))
           let check = Date.parse(val.checkOutDate)
-          if (check >= today) var forStatus = true
-          if (!forStatus) value.status = 'Free'
+          let forStatus
+          check >= today ? forStatus = true : forStatus = false
+          !forStatus ? value.status = 'Free' : value.status = 'Booked'
         })
       })
       }else {
@@ -116,6 +119,7 @@ export default {
           }
         })
       }
+      this.RoomsDetails.loading = false
     },
     bookedDetails(details){
       this.statusDialog = true

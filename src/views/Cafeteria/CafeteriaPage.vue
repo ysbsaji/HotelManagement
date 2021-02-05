@@ -8,74 +8,44 @@
         </v-col>
       </v-row>
     </div>
-          <v-row>
-        <v-col cols="3" v-for="(item, index) in cafeDetails" :key="index">
-          <v-card
-            class="mx-auto my-12"
-            max-width="374"
-          >
-            <v-img
-              height="250"
-              :src="item.image"
-            ></v-img>
-
-            <v-card-title>Cafeteria Tables</v-card-title>
-
-            <v-card-text>
-              <p><b>Table Number:</b> {{ item.tableNumber }} </p>
-              <p><b>Nuber of chairs:</b> {{ item.totalChairs }} </p>
-            </v-card-text>
-
-            <v-divider class="mx-4"></v-divider>
-            <v-card-actions>
-              <v-list-item>
-                <v-row justify="center">
-                  <v-btn
-                    color="deep-purple lighten-2"
-                    :disabled="item.bookingStatus"
-                    @click="orderedTableDetails.tableNumber = item.tableNumber; orderedTableDetails.tableId = item.id; foodOrderDialog = true"
-                  >
-                    Order Now
-                  </v-btn>
-                </v-row>
-              </v-list-item>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-dialog
-        v-model="foodOrderDialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-      >
-        <v-card>
-        <v-toolbar
-          dark
-          color="#EF5350"
-        >
-          <v-btn
-            icon
-            dark
-            @click="foodOrderDialog = false"
-          >
+    <v-row class="pa-2">
+      <v-col cols="12" md="4" lg="3" sm="6" v-for="(item, index) in cafeDetails" :key="index">
+        <v-skeleton-loader :loading="loading" type="card, actions" class="mx-auto my-12" max-width="374">
+          <v-hover v-slot="{ hover }">
+            <v-card class="mx-auto my-12" max-width="374" :elevation="hover ? 24 : 0">
+              <v-img height="250" :src="item.image" @click="getIMageUrl(item)"></v-img>
+              <v-card-title>Cafeteria Tables</v-card-title>
+              <v-card-text>
+                <p><b>Table Number:</b> {{ item.tableNumber }} </p>
+                <p><b>Nuber of chairs:</b> {{ item.totalChairs }} </p>
+              </v-card-text>
+              <v-divider class="mx-4"></v-divider>
+              <v-card-actions>
+                <v-list-item>
+                  <v-row justify="center">
+                    <v-btn color="deep-purple lighten-2" :disabled="item.bookingStatus" @click="orderedTableDetails.tableNumber = item.tableNumber; orderedTableDetails.tableId = item.id; foodOrderDialog = true">Order Now</v-btn>
+                  </v-row>
+                </v-list-item>
+              </v-card-actions>
+            </v-card>
+          </v-hover>
+        </v-skeleton-loader>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="foodOrderDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <v-card>
+        <v-toolbar dark color="#EF5350">
+          <v-btn icon dark @click="foodOrderDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Order Your Food Here.</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn
-              dark
-              text
-              :loading="btnLoading"
-              @click="saveSelectedFood"
-            >
-              Save
-            </v-btn>
+            <v-btn dark text :loading="btnLoading" @click="saveSelectedFood">Save</v-btn>
           </v-toolbar-items>
         </v-toolbar>
         <table-data :data="foodTableDetails"/>
-        </v-card>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -88,6 +58,7 @@ export default {
   components: { NavigationBar, TableData },
   data () {
     return{
+      loading: true,
       orderedTableDetails: {},
       foodOrdered: [],
       foodDetails: {},
@@ -114,6 +85,7 @@ export default {
       if (details) this.cafeDetails = this.getArrayObjFromObjList(details)
       let fooddetails =await this.getDetailsFromApi('https://traineesapi.firebaseio.com/foodDetails.json')
       if (fooddetails) this.foodTableDetails.list = this.getArrayObjFromObjList(fooddetails)
+      this.loading = false
     },
     addQuantity (item) {
       this.foodTableDetails.list.forEach(val => {

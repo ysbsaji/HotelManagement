@@ -11,8 +11,8 @@
     <div class="my-6">
       <p class="display-1 text-center">Hospitality Solutions</p>
       <v-row>
-        <v-col cols="6" class="text-center"><img src="https://www.staah.com/images/STAAH_Beta_STAAH_Beta_hm_cm.jpg" alt="No Image"> </v-col>
-        <v-col cols="6">
+        <v-col cols="12" md="6" lg="6" sm="12" class="text-center"><img src="https://www.staah.com/images/STAAH_Beta_STAAH_Beta_hm_cm.jpg" alt="No Image"> </v-col>
+        <v-col cols="12" md="6" lg="6" sm="12">
           <p class="headline  pa-8 my-12">"It's not your customer's job to remember you, it is your obligation and responsibilty to make sure they don't have to change to forget you."</p>
         </v-col>
       </v-row>
@@ -24,10 +24,10 @@
       </v-layout>
     </v-parallax>
     <v-row>
-      <v-col cols="6" class="text-center mt-12"> 
+      <v-col cols="12" md="6" lg="6" sm="12" class="text-center mt-12"> 
         <img height="200px" :src="imageLink.logo">
       </v-col>
-      <v-col cols="6"  class="text-center">
+      <v-col cols="12" md="6" lg="6" sm="12"  class="text-center">
         <v-form>
           <v-container>
             <h1 class="my-6">Leave your Comment here...!</h1>

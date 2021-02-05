@@ -1,28 +1,27 @@
 <template>
-  <div>
+  <v-app class="grey lighten-4" style="background-image: url('https://images.unsplash.com/photo-1604403428907-673e7f4cd341?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTF8fGxvZ2lufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'); width: 100%;  background-repeat:repeat">
     <NavigationBar/>
     <v-container class="signin">
-      <v-layout class="text-center my-12 ml-12">
-        <v-flex>
-          <img src="https://img.freepik.com/free-vector/login-concept-illustration_114360-757.jpg?size=338&ext=jpg" alt="" width="80%">
-        </v-flex>
-        <v-flex class="grey lighten-4">
-          <v-container style="position: relative;top: 13%;" class="text-center">
-            <v-card flat>
-              <v-card-title primary-title>
-                <h4>Login</h4>
-              </v-card-title>
-              <v-form ref="signinForm">
-              <v-text-field prepend-icon="mdi-account" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
-              <v-text-field prepend-icon="mdi-lock" label="Password" type="password" v-model="signInFormData.password" :rules="passwordValidation"></v-text-field>
-              <v-card-actions>
-                <v-btn primary large block @click="signIn">Login</v-btn>
-              </v-card-actions>
-              </v-form>
-            </v-card>
-          </v-container>
-        </v-flex>
-      </v-layout>
+      <v-row justify="center" class="mx-auto">
+        <!-- <v-col cols="12" lg="5" md="6" sm="5">
+          <v-img src="https://img.freepik.com/free-vector/login-concept-illustration_114360-757.jpg?size=338&ext=jpg" alt="" width="400" class="signinImg"></v-img>
+        </v-col> -->
+        <v-col cols="12" lg="4" md="4" class="text-center">
+          <v-card flat>
+            <v-card-title>
+              <h4>Login</h4>
+            </v-card-title>
+            <v-divider></v-divider>
+            <v-form ref="signinForm" class="px-8">
+            <v-text-field prepend-icon="mdi-account" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
+            <v-text-field prepend-icon="mdi-lock" label="Password" type="password" v-model="signInFormData.password" :rules="passwordValidation"></v-text-field>
+            <v-card-actions>
+              <v-btn primary large block @click="signIn">Login</v-btn>
+            </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
     <v-snackbar v-model="snackbarForSignin">Wrong email or password
       <template v-slot:action>
@@ -35,7 +34,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -76,8 +75,7 @@ export default {
 </script>
 
 <style scoped>
-.signin{
-  padding-right: 20%;
-  padding-left: 20%
+.signin {
+  margin-top: 10%
 }
 </style>

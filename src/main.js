@@ -3,9 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Axios from 'axios'
-import vuetify from './plugins/vuetify';
-import Common from './mixins/Common';
+import vuetify from './plugins/vuetify'
+import Common from './mixins/Common'
 import Validation from './mixins/validation'
+import VDigitalTimePicker from 'v-digital-time-picker'
+
+Vue.use(VDigitalTimePicker)
 
 let mixins = { Common, Validation }
 Object.keys(mixins).forEach(key => {

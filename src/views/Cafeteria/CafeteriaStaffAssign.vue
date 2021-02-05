@@ -8,6 +8,7 @@
     <table-data :data="cafeDetails" class="my-3 pa-3"/>
     <v-dialog
      v-model="foodDetailDialog"
+     persistent
      width="500"
     >
       <v-card>
@@ -84,6 +85,7 @@ export default {
           { text: 'Table Number', value: 'tableNumber' }, { text: 'Total Chairs', value: 'totalChairs' }, { text: 'Status', value: 'status'}, { text: 'Is Assigned', value: 'isAssigned'}, { text: 'Order Stages', value: 'orderStages'}
         ],
         list: [],
+        loading: true,
         bookedList: [{
           click: (item) => this.bookedDetails(item),
           icon:'mdi-clipboard-account-outline'
@@ -121,6 +123,7 @@ export default {
           if (val.isAssigned === this.$store.state.userDetails.name) this.cafeDetails.list.push(val)
         })
       }
+      this.cafeDetails.loading = false
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
       if (empDetails) this.employeeDetails = this.getArrayObjFromObjList(empDetails)
     },
