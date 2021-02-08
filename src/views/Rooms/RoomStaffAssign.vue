@@ -106,7 +106,7 @@ export default {
           let check = Date.parse(val.checkOutDate)
           let forStatus
           check >= today ? forStatus = true : forStatus = false
-          !forStatus ? value.status = 'Free' : value.status = 'Booked'
+          !forStatus ? (value.status = 'Free', value.isAssigned = '') : value.status = 'Booked'
         })
       })
       }else {

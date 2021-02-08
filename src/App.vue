@@ -68,6 +68,7 @@
               color="green darken-1"
               text
               @click="delRecordsFromApi"
+              :loading="btnLoading"
             >
               Yes
             </v-btn>
@@ -121,8 +122,10 @@ export default {
   },
   methods: {
     async delRecordsFromApi () {
+      this.btnLoading = true
       await this.deleteDetailsFromApi(this.$store.state.delDetails.url)
       this.$store.commit('hideDelDialog', false)
+      this.btnLoading = false
     },
     logout () {
       this.$router.push('signuppage')
