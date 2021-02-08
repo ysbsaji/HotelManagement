@@ -115,10 +115,10 @@ export default {
         this.$refs.roomsForm.reset()
       }
     },
-    delRoomDetails (item) {
+    async delRoomDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/rooms/' + item.id + '.json'
       this.$store.commit('showDelDialog', item)
-      this.getTableDetails()
+      await this.getTableDetails()
     },
     getImageUrl (file) {
       if (file) {

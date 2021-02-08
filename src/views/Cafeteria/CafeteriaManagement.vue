@@ -158,10 +158,10 @@ export default {
         this.$refs.cafeForm.reset()
       }
     },
-    delCafeDetails (cafeDetails) {
+    async delCafeDetails (cafeDetails) {
       cafeDetails.url = 'https://traineesapi.firebaseio.com/cafeteriaDetails/' + cafeDetails.id + '.json'
       this.$store.commit('showDelDialog', cafeDetails)
-      this.getTableDetails()
+      await this.getTableDetails()
     },
     async getTableDetails () {
       let cafeDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/cafeteriaDetails.json')
@@ -197,10 +197,10 @@ export default {
       this.updateBtn1 = this.foodFormDia = false
       this.$refs.foodForm.reset()
     },
-    delFoodDetails (item) {
+    async delFoodDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/foodDetails/' + item.id + '.json'
       this.$store.commit('showDelDialog', item)
-      this.getTableDetails()
+      await this.getTableDetails()
     }
   },
   mounted () {

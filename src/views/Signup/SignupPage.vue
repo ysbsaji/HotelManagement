@@ -3,9 +3,6 @@
     <NavigationBar/>
     <v-container class="signin">
       <v-row justify="center" class="mx-auto">
-        <!-- <v-col cols="12" lg="5" md="6" sm="5">
-          <v-img src="https://img.freepik.com/free-vector/login-concept-illustration_114360-757.jpg?size=338&ext=jpg" alt="" width="400" class="signinImg"></v-img>
-        </v-col> -->
         <v-col cols="12" lg="4" md="4" class="text-center">
           <v-card flat>
             <v-card-title>
