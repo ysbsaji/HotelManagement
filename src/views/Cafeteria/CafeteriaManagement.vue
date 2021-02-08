@@ -170,14 +170,12 @@ export default {
       let foodDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/foodDetails.json')
       if (foodDetails) this.foodTableDetails.list = this.getArrayObjFromObjList(foodDetails)
       this.foodTableDetails.loading = false
-      this.btnLoading = false
-      this.btnLoading1 = false
+      this.btnLoading =  this.btnLoading1 = false
     },
     async saveFoodDetails () {
       if (this.$refs.foodForm.validate()) {
         this.btnLoading1 = true
-        this.foodDetails.quantity = 0
-        this.foodDetails.price = 0
+        this.foodDetails.quantity = this.foodDetails.price =  0
         await this.postDetailsToApi('https://traineesapi.firebaseio.com/foodDetails.json',this.foodDetails)
         await this.getTableDetails()
         this.foodFormDia = false

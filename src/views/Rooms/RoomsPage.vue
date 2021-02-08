@@ -143,9 +143,7 @@ export default {
           this.bookingRoomDetails.bookingDetails.push(this.customerDetails)
           this.bookingRoomDetails.status = 'Booked'
           await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.bookingRoomDetails.id + '.json', this.bookingRoomDetails)
-          this.roomBokingDialog = false
-          this.snackbarForRoomDia = false
-          this.btnLoading = false
+          this.roomBokingDialog = this.snackbarForRoomDia = this.btnLoading = false
         }else { this.snackbarForRoom = true, this.snackbarForRoomDia = false, this.roomBokingDialog = false,  this.btnLoading = false }
         this.$refs.cafeForm.reset()
       }

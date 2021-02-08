@@ -112,8 +112,7 @@ export default {
         await this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.orderedTableDetails.tableId  + '.json', details)
         await this.getDetails()
       }
-      this.btnLoading = false
-      this.foodOrderDialog = false
+      this.btnLoading = this.foodOrderDialog = false
     }
   },
   mounted () {

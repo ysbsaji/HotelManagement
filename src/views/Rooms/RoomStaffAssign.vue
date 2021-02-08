@@ -92,8 +92,7 @@ export default {
       this.btnLoading = true
       this.employeeDetails.find(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetails.isAssigned = val.name })
       await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.updateDetails.id + '.json', this.updateDetails)
-      this.btnLoading = false
-      this.isAssignDialog = false
+      this.btnLoading = this.isAssignDialog = false
     },
     async getDetailOfBookingRooms () {
       let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')

@@ -145,9 +145,7 @@ export default {
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
       }
       await this.getDetails()
-      this.btnLoading = false
-      this.isAssignDialog = false
-      this.orderStagesDialog = false
+      this.btnLoading = this.isAssignDialog = this.orderStagesDialog = false
     },
     changeOrderStages (details) {
       this.updateDetail = details
