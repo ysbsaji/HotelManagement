@@ -7,6 +7,8 @@ import vuetify from './plugins/vuetify'
 import Common from './mixins/Common'
 import Validation from './mixins/validation'
 import VDigitalTimePicker from 'v-digital-time-picker'
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
 
 Vue.use(VDigitalTimePicker)
 

@@ -8,9 +8,6 @@ export default {
       updateBtn: false,
     }
   },
-  computed: {
-    //
-  },
   methods: {
     getIMageUrl (item) {
       this.$store.dispatch('imgDialog', item)
@@ -65,6 +62,10 @@ export default {
       })
       return result
     },
+    getCookie(item){
+      console.log(item);
+      return item
+    }
   },
   filters: {
     capitalize (value) {

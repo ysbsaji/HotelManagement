@@ -12,6 +12,7 @@
             <v-form ref="signinForm" class="px-8">
             <v-text-field prepend-icon="mdi-account" label="User Email" v-model="signInFormData.userEmail" :rules="emailValidation"></v-text-field>
             <v-text-field prepend-icon="mdi-lock" label="Password" type="password" v-model="signInFormData.password" :rules="passwordValidation"></v-text-field>
+            <v-checkbox v-model="customerCheckbox" label="I am a customer"></v-checkbox>
             <v-card-actions>
               <v-btn primary large block @click="signIn">Login</v-btn>
             </v-card-actions>
@@ -22,13 +23,7 @@
     </v-container>
     <v-snackbar v-model="snackbarForSignin">Wrong email or password
       <template v-slot:action>
-        <v-btn
-          color="pink"
-          text
-          @click="snackbarForSignin = false"
-        >
-          Close
-        </v-btn>
+        <v-btn color="pink" text @click="snackbarForSignin = false">Close</v-btn>
       </template>
     </v-snackbar>
   </v-app>
@@ -36,6 +31,7 @@
 
 <script>
 import NavigationBar from "../../components/NavigationBar";
+import VueCookies from 'vue-cookies'
 
 export default {
   components: { NavigationBar },
@@ -43,26 +39,50 @@ export default {
     return {
       snackbarForSignin: false,
       signInFormData: {},
-      userDetails: []
+      userDetails: [],
+      customerArr: [],
+      customerCheckbox: false
     }
   },
   methods: {
   signIn () {
     if (this.$refs.signinForm.validate()) {
-      this.userDetails.forEach(val => {
-        if (val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) {
-          localStorage.setItem('userDetails', JSON.stringify(val))
-          localStorage.setItem('authentication', true)
-          this.$router.push('roomstaffassign')
-          this.$root.$emit('getUserDetails')
-          this.$refs.signinForm.reset()
+      this.userDetails.find(val => {
+        // if (this.customerCheckbox) {
+        //   this.customerArr.forEach(value => {
+        //     if (value.bookingDetails) value.bookingDetails.forEach(val => {
+        //       val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password  ? (value.cus = val , this.setLoginDetails(value), this.$router.push('customer')) : this.snackbarForSignin = true
+        //     })
+        //   })
+        // }else 
+        // {
+          if (val.email === this.signInFormData.userEmail && val.password === this.signInFormData.password) {
+            delete val.image
+            this.setCookie('activeUserDetails',JSON.stringify(val),1)
+            this.$root.$emit('getUserDetails')
+            this.$refs.signinForm.reset()
+            this.$router.push('roomspage/')
         } else { this.snackbarForSignin = true }
+        // }
       })
     }
   },
+  setCookie (cName, cValue, days) {
+    var d = new Date();
+    d.setTime(d.getTime() + (days*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    VueCookies.set(cName, cValue, expires)
+  },
+  // setLoginDetails (val) {
+  //   localStorage.setItem('userDetails', JSON.stringify(val))
+  //   this.$root.$emit('getUserDetails')
+  //   this.$refs.signinForm.reset()
+  // },
   async getDetails () {
     let empDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/employeeDetails.json')
     if (empDetails) this.userDetails = this.getArrayObjFromObjList(empDetails)
+    let customer = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
+    this.customerArr = this.getArrayObjFromObjList(customer)
   }
   },
   mounted () {

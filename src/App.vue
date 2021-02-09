@@ -1,18 +1,10 @@
 <template>
   <v-app>
-    <v-navigation-drawer app v-model="drawer" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
+    <v-navigation-drawer app v-model="drawer" v-if="['Customer', 'RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
       <img class="mx-3 my-3" src="@/assets/logo-hotel.png" alt="" width="90%">
       <v-divider></v-divider>
-      <v-list
-        color="mt-6"
-        dense
-        nav
-      >
-        <v-list-item
-          v-for="item in navigationListItems"
-          :key="item.title"
-          :to="item.link"
-        >
+      <v-list color="mt-6" dense nav v-if="['Manager', 'Staff'].includes(userDetails.role)">
+        <v-list-item v-for="item in navigationListItems" :key="item.title" :to="item.link">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -21,28 +13,30 @@
           </v-list-item-content>
           </v-list-item>
       </v-list>
-       <v-list-group prepend-icon="mdi-cog-outline" v-if="userDetails.role == 'Manager'">
-          <template v-slot:activator>
-            <v-list-item-title>Settings</v-list-item-title>
-          </template>
-            <v-list-item  v-for="(item) in settingsItems" :key="item.title" :to="item.link">
-              <v-list-item-icon><v-icon v-text="item.icon"></v-icon></v-list-item-icon>
-              <v-list-item-content><v-list-item-title v-text="item.title"></v-list-item-title></v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+      <v-list color="mt-6" dense nav v-if="!['Manager', 'Staff'].includes(userDetails.role)" @click="$router.push('/cafeteriapage')">
+        <v-list-item to="/cafeteriapage">
+          <v-list-item-icon><v-icon>mdi-home-export-outline</v-icon></v-list-item-icon>
+          <v-list-item-content><v-list-item-title></v-list-item-title>Cafeteria</v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-list-group prepend-icon="mdi-cog-outline" v-if="userDetails.role == 'Manager'">
+        <template v-slot:activator>
+          <v-list-item-title>Settings</v-list-item-title>
+        </template>
+          <v-list-item  v-for="(item) in settingsItems" :key="item.title" :to="item.link">
+            <v-list-item-icon><v-icon v-text="item.icon"></v-icon></v-list-item-icon>
+            <v-list-item-content><v-list-item-title v-text="item.title"></v-list-item-title></v-list-item-content>
+        </v-list-item>
+      </v-list-group>
     </v-navigation-drawer>
 
-    <v-app-bar elevation="0" app color="#e74c3c" v-if="['RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
+    <v-app-bar elevation="0" app color="#e74c3c" v-if="['Customer', 'RoomsManagement', 'EmployeeManagement', 'CustomerManagement', 'CafeteriaManagement', 'RoomStaffAssign', 'CafeteriaStaffAssign'].includes($route.name)">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       {{ userDetails.name }}  {{ userDetails.role }}
       <v-spacer></v-spacer>
       <v-tooltip bottom>
       <template v-slot:activator="{ on }">
-      <v-avatar
-        size="56"
-        v-on="on"
-        @click="logout"
-      > <v-icon>mdi-logout</v-icon></v-avatar>
+      <v-avatar size="56" v-on="on" @click="logout"><v-icon>mdi-logout</v-icon></v-avatar>
       </template>
       <span>Log Out</span>
       </v-tooltip>
@@ -53,64 +47,44 @@
 			</v-container>
     </v-main>
     <v-row justify="center">
-      <v-dialog
-        v-model="deleteDialog"
-        persistent
-        max-width="500"
-      >
+      <v-dialog v-model="getDelDialog" persistent max-width="500">
         <v-card>
           <v-card-title class="headline">
             Are you sure want to delete ?
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="green darken-1"
-              text
-              @click="delRecordsFromApi"
-              :loading="btnLoading"
-            >
-              Yes
-            </v-btn>
-            <v-btn
-              color="green darken-1"
-              text
-              @click="$store.commit('hideDelDialog', false)"
-            >
-              No
-            </v-btn>
+            <v-btn color="green darken-1" text @click="delRecordsFromApi" :loading="btnLoading">Yes</v-btn>
+            <v-btn color="green darken-1" text @click="$store.commit('hideDelDialog', false)">No</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-row>
-    <v-dialog
-      v-model="imgDialog"
-      width="800"
-    >
+    <v-dialog v-model="imgDialog" width="800">
       <v-img :src="$store.state.image" width="100%" contain></v-img>
     </v-dialog>
   </v-app>
 </template>
 
 <script>
+import VueCookies from 'vue-cookies'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
       userDetails: null,
       drawer: true,
       navigationListItems: [
-        { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomstaffassign' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
+        { title: 'RoomsAllocation', icon: 'mdi-home-outline', link:'/roomspage/' }, { title: 'CafetetriaAllocation', icon: 'mdi-home-export-outline', link:'/cafeteriastaffassign' }
       ],
       settingsItems: [
-        { title: 'Rooms', icon: 'mdi-home-outline', link:'/roomsmanagement' },{ title: 'Cafeteria', icon: 'mdi-home-export-outline', link:'/cafeteriamanagement' },
+        { title: 'Rooms', icon: 'mdi-home-outline', link:'/roomspage/roomsmanagement' },{ title: 'Cafeteria', icon: 'mdi-home-export-outline', link:'/cafeteriamanagement' },
         { title: 'Employee', icon: 'mdi-account-supervisor', link:'/employeemanagement' }
       ]
     }
   },
   computed: {
-    deleteDialog () {
-      return this.$store.state.showDelDialog
-    },
+    ...mapGetters(['getDelDialog']),
     imgDialog: {
       get () {
         return this.$store.state.imgDialog
@@ -128,17 +102,18 @@ export default {
       this.btnLoading = false
     },
     logout () {
-      this.$router.push('signuppage')
-      localStorage.setItem('authentication', false)
+      this.$router.push('/signuppage')
+      VueCookies.remove('activeUserDetails')
     },
     getAuthUserDetails () {
-      let details = localStorage.getItem('userDetails')
-      this.userDetails = JSON.parse(details)
+      this.userDetails = VueCookies.get('activeUserDetails')
       this.$store.dispatch('userRoleChange', this.userDetails)
-      if (this.$route.name !== 'HomePage') !JSON.parse(localStorage.getItem('authentication')) ? this.$router.push('/') : false
+      if (this.$route.name !== 'HomePage') !VueCookies.get('activeUserDetails') ? this.$router.push('/signuppage') : false
     }
   },
   mounted () {
+    // this.$store.commit('change', 'britto')
+    // console.log(this.$store.state.test.name)
     this.getAuthUserDetails()
     this.$root.$on('getUserDetails', () => {
       this.getAuthUserDetails()

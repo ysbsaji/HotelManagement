@@ -138,7 +138,7 @@ export default {
     async confirmAssign (item) {
       this.btnLoading = true
       if (item !== 'orderStages') {
-        this.employeeDetails.forEach(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetail.isAssigned = val.name })
+        this.employeeDetails.filter(val => { if (val.id === this.assignEmployee.employeeId) this.updateDetail.isAssigned = val.name })
         await  this.updateDetailsToApi('https://traineesapi.firebaseio.com/cafeteriaDetails/' + this.updateDetail.id + '.json', this.updateDetail)
       }else {
         this.updateDetail.orderStages = this.assignEmployee.orderStages

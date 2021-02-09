@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomePage from '../views/Home/HomePage.vue'
+import VueCookies from 'vue-cookies'
 
+// Vue.use(VueCookies)
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,18 +19,32 @@ const routes = [
   },
   {
     path: '/roomspage',
-    name: 'RoomsPage',
-    component: () => import(/* webpackChunkName: "RoomsPage" */ '../views/Rooms/RoomsPage.vue')
-  },
-  {
-    path: '/roomsmanagement',
-    name: 'RoomsManagement',
-    component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomsManagement.vue')
-  },
-  {
-    path: '/roomstaffassign',
-    name: 'RoomStaffAssign',
-    component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomStaffAssign.vue')
+    component: () => import('../views/Rooms/index.vue'),
+    children: [
+      {
+        path: '/',
+        name: 'RoomStaffAssign',
+        component: () => import('../views/Rooms/RoomStaffAssign.vue')
+      },
+      {
+        path: 'rooms',
+        name: 'Rooms',
+        component: () => import('../views/Rooms/RoomsPage.vue'),
+      },
+      {
+        path: 'roomsmanagement',
+        name: 'RoomsManagement',
+        component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/RoomsManagement.vue')
+      },
+      {
+        path: 'actions/:name',
+        name: 'RoomsActions',
+        component: () => import(/* webpackChunkName: "RoomsManagement" */ '../views/Rooms/Action.vue'),
+        meta:{
+          aboutPage : 'This Page used to manage the rooms'
+        }
+      },
+    ]
   },
   {
     path: '/cafeteriapage',
@@ -50,12 +66,23 @@ const routes = [
     name: 'EmployeeManagement',
     component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/Employee/EmployeeManagement.vue')
   },
+  {
+    path: '/customer',
+    name: 'Customer',
+    component: () => import(/* webpackChunkName: "EmployeeManagement" */ '../views/Employee/Customer.vue')
+  }
 ]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'SignupPage') {
+    if(VueCookies.get('activeUserDetails')) next()
+    else !['/roomspage/rooms', '/cafeteriapage', '/'].includes(to.fullPath) ? next({path: '/signuppage'}) : next() 
+  }else { next() }
 })
 
 export default router

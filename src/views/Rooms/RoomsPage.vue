@@ -50,6 +50,7 @@
               <v-text-field outlined dense label="Name" v-model="customerDetails.name" :rules="requiredValidation"/>
               <v-text-field outlined dense type="email" label="Email" v-model="customerDetails.email" :rules="emailValidation"/>
               <v-text-field outlined dense type="number" label="Contact Number" v-model="customerDetails.contactNumber" :rules="requiredValidation"/>
+              <v-text-field outlined dense label="Password" type="password" v-model="customerDetails.password" :rules="passwordValidation"></v-text-field>
               <v-menu v-model="datePicker" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field outlined dense v-model="customerDetails.checkInDate" :rules="requiredValidation" label="Checkin Date" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>

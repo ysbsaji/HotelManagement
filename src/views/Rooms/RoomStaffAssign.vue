@@ -1,15 +1,8 @@
 <template>
   <div>
-    <v-banner
-      color="red"
-      style="border-radius: 3px"
-      class="my-3 ma-2"
-    ><h3>Room Allocation Management</h3></v-banner>
+    <v-banner color="red" style="border-radius: 3px" class="my-3 ma-2"><h3>Room Allocation Management</h3></v-banner>
     <table-data :data="RoomsDetails" class="my-3 pa-3"/>
-    <v-dialog
-      v-model="isAssignDialog"
-      width="500"
-    >
+    <v-dialog v-model="isAssignDialog" width="500">
       <v-card>
         <v-card-title class="headline grey lighten-2">
           Assign Employee To Customer
@@ -24,11 +17,7 @@
           </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-model="statusDialog"
-      persistent
-      width="100%"
-    >
+    <v-dialog v-model="statusDialog" persistent width="100%">
       <v-card>
         <v-card-title>
           Customer Information
@@ -52,7 +41,9 @@ export default {
   components: { TableData },
   data () {
     return {
+      userDetails: [],
       isAssignDialog: false,
+      showDetails: false,
       statusDialog: false,
       assignEmployee: {},
       updateDetails: {},
@@ -112,7 +103,7 @@ export default {
       }else {
         let filter = this.RoomsDetails.list
         this.RoomsDetails.list = []
-        filter.forEach((value) => {
+        filter.find((value) => {
           if (value.isAssigned === this.$store.state.userDetails.name) {
             this.RoomsDetails.list.push(value)
           }

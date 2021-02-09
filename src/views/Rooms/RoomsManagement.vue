@@ -5,8 +5,8 @@
       style="border-radius: 3px"
       class="my-3 ma-2"
     ><h3>Rooms Management</h3></v-banner>
-    <v-btn class="mx-3 my-3" elevation="0" color="#EF5350" @click="roomFormDia = true; saveBtn = true; updateBtn = false ">Add</v-btn>
-    <v-dialog v-model="roomFormDia" max-width="600" persistent>
+    <v-btn class="mx-3 my-3" elevation="0" color="#EF5350" @click="addRoomsFunction" >Add</v-btn>
+    <!-- <v-dialog v-model="roomFormDia" max-width="600" persistent>
       <v-card height="400">
         <v-card-title class="headline grey lighten-2"> Manage Rooms Here !</v-card-title>
         <v-divider class="mb-2"></v-divider>
@@ -52,7 +52,7 @@
           </v-row>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
     <table-data :data="RoomsDetails" class="my-3 pa-3"/>
   </div>
 </template>
@@ -83,16 +83,10 @@ export default {
     }
   },
   methods: {
-    async saveRoomDetails () {
-      if(this.$refs.roomsForm.validate()) {
-        this.btnLoading =  true
-        this.roomsFormDetails.status = 'Free'
-        this.roomsFormDetails.isAssigned = ''
-        await this.postDetailsToApi('https://traineesapi.firebaseio.com/rooms.json',this.roomsFormDetails)
-        await this.getTableDetails()
-        this.roomFormDia = false
-        this.$refs.roomsForm.reset()
-      }
+    addRoomsFunction () {
+      let x= 'new'
+      this.$router.push({ path: `/roomspage/actions/${x}`})
+      this.updateBtn = false
     },
     async getTableDetails () {
       let roomDetails = await this.getDetailsFromApi('https://traineesapi.firebaseio.com/rooms.json')
@@ -100,20 +94,8 @@ export default {
       this.RoomsDetails.loading = this.btnLoading = false
     },
     editRoomDetails (roomdetails) {
-      this.roomsFormDetails = Object.assign({}, roomdetails)
-      this.roomsFormDetails.file = [{}]
-      this.saveBtn = false
-      this.updateBtn = this.roomFormDia = true
-    },
-    async updateRoomDetails () {
-      if(this.$refs.roomsForm.validate()) {
-        this.btnLoading = true
-        await this.updateDetailsToApi('https://traineesapi.firebaseio.com/rooms/' + this.roomsFormDetails.id + '.json', this.roomsFormDetails)
-        await this.getTableDetails()
-        this.saveBtn = true
-        this.updateBtn = this.roomFormDia = false
-        this.$refs.roomsForm.reset()
-      }
+      this.$router.push({ path: `/roomspage/actions/${roomdetails.id}`})
+      //query: { roomtype: roomdetails.roomType }
     },
     async delRoomDetails (item) {
       item.url = 'https://traineesapi.firebaseio.com/rooms/' + item.id + '.json'

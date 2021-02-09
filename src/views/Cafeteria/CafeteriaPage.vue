@@ -88,12 +88,12 @@ export default {
       this.loading = false
     },
     addQuantity (item) {
-      this.foodTableDetails.list.forEach(val => {
+      this.foodTableDetails.list.find(val => {
         item.id === val.id ? (val.quantity++, val.price = val.quantity * val.rate) : false
       })
     },
     minusQuantity (item) {
-      this.foodTableDetails.list.forEach(val => {
+      this.foodTableDetails.list.find(val => {
         if (item.id === val.id) {
           val.quantity !== 0 ? (val.quantity--, val.price = val.quantity * val.rate) : false
         }
